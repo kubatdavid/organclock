@@ -22,9 +22,12 @@ jobs:
       - name: Build debug APK
         run: gradle assembleDebug --no-daemon
 
+      - name: Rename APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk OrganClock.apk
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: organ-clock-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: OrganClock
+          path: OrganClock.apk
           if-no-files-found: error
