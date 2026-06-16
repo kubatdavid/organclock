@@ -1,9 +1,6 @@
 package com.organclock;
 
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -37,9 +34,7 @@ public class OrganClockWidget extends AppWidgetProvider {
     static final String KEY_THEME = "theme";          // "system", "light", "dark"
     static final String KEY_NOTIFY = "notify_";       // + slot index -> boolean
     static final String KEY_LAST_SLOT = "last_slot";  // last slot we notified for
-
-    static final String CHANNEL_ID = "organ_active";
-    static final int NOTIFICATION_ID = 1;
+    static final String KEY_SOUND = "sound";          // alarm sound URI ("" = default)
 
     // Five-element accent color per slot (Wood/Fire/Earth/Metal/Water).
     static final int[] ELEMENT_COLOR = {
@@ -155,34 +150,25 @@ public class OrganClockWidget extends AppWidgetProvider {
         return false;
     }
 
+    /** Fire the alarm for a newly-active organ: start the foreground service
+     *  that plays the chosen sound on the alarm stream and shows a notification. */
     static void maybeNotify(Context ctx, int slot, String[] organs, String[] herbs, String subtitle) {
         if (!prefs(ctx).getBoolean(KEY_NOTIFY + slot, false)) {
             return;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                && ctx.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
-                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            return; // permission not granted yet
+        Intent i = new Intent(ctx, AlarmSoundService.class);
+        i.putExtra(AlarmSoundService.EXTRA_TITLE, organs[slot]);
+        i.putExtra(AlarmSoundService.EXTRA_TEXT, herbs[slot]);
+        i.putExtra(AlarmSoundService.EXTRA_SUB, subtitle);
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                ctx.startForegroundService(i);
+            } else {
+                ctx.startService(i);
+            }
+        } catch (Exception e) {
+            // a background start can be blocked in rare states; ignore
         }
-
-        NotificationManager nm = ctx.getSystemService(NotificationManager.class);
-        if (nm == null) {
-            return;
-        }
-        String channelName = localized(ctx).getString(R.string.channel_name);
-        nm.createNotificationChannel(new NotificationChannel(
-                CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_DEFAULT));
-
-        Notification n = new Notification.Builder(ctx, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_stat)
-                .setContentTitle(organs[slot])
-                .setContentText(herbs[slot])
-                .setSubText(subtitle)
-                .setStyle(new Notification.BigTextStyle().bigText(herbs[slot]))
-                .setContentIntent(detailIntent(ctx))
-                .setAutoCancel(true)
-                .build();
-        nm.notify(NOTIFICATION_ID, n);
     }
 
     /** Wake at the next 2-hour window boundary so the widget flips on time. */
@@ -198,9 +184,18 @@ public class OrganClockWidget extends AppWidgetProvider {
         }
 
         AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
-        if (am != null) {
-            // Inexact + doze-friendly: no SCHEDULE_EXACT_ALARM permission needed.
-            am.setAndAllowWhileIdle(AlarmManager.RTC, c.getTimeInMillis(), tickIntent(ctx));
+        if (am == null) {
+            return;
+        }
+        long t = c.getTimeInMillis();
+        if (anyNotifyEnabled(ctx)) {
+            // Exact alarm clock: wakes the device, fires in Doze, bypasses DND as
+            // an alarm, and lets us start the foreground sound service from the
+            // resulting broadcast. Needs no SCHEDULE_EXACT_ALARM permission.
+            am.setAlarmClock(new AlarmManager.AlarmClockInfo(t, detailIntent(ctx)), tickIntent(ctx));
+        } else {
+            // Widget-only: inexact and battery-friendly.
+            am.setAndAllowWhileIdle(AlarmManager.RTC, t, tickIntent(ctx));
         }
     }
 

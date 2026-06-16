@@ -22,10 +22,13 @@ navigation bar with four tabs:
 - **Elements** — a five-element diagram (drawn in code, no image assets) showing
   the **generating (Sheng)** cycle around the pentagon and the **controlling
   (Ke)** cycle across the star, with a legend and both cycles written out.
-- **Alerts** — tick any organs you want a notification for. When a ticked organ
-  becomes active (on its 2-hour boundary), you get one notification (organ name
-  + herbs). The first time you enable one, Android asks for notification
-  permission — allow it, or notifications stay silent.
+- **Alerts** — tick any organs you want an alarm for. When a ticked organ
+  becomes active (on its 2-hour boundary), the app **sounds an alarm**: the
+  chosen tone plays on the alarm audio stream (loud, audible through silent/DND),
+  loops until you press **Stop**, and auto-stops after 60 s as a safety net.
+  Pick the sound under **Sound** — either a built-in **alarm tone** or any
+  **audio file** on the device — and use **Test alarm** to preview it. The first
+  time you enable an organ, Android asks for notification permission.
 - **Settings** — see below.
 
 The app also opens from the **Organ Clock** icon in the app drawer.

@@ -2,6 +2,16 @@
 <resources>
     <string name="app_name">Orgánové hodiny</string>
     <string name="channel_name">Aktivní orgán</string>
+    <string name="channel_alarm">Budík orgánu</string>
+    <string name="alarm_stop">Zastavit</string>
+    <string name="sound_header">Zvuk</string>
+    <string name="sound_current_label">Aktuální zvuk</string>
+    <string name="sound_default">Výchozí budík</string>
+    <string name="sound_custom">Vlastní zvuk</string>
+    <string name="sound_choose_tone">Vybrat tón budíku</string>
+    <string name="sound_pick_file">Vybrat zvukový soubor</string>
+    <string name="sound_test">Vyzkoušet budík</string>
+    <string name="ringtone_picker_title">Vyberte tón budíku</string>
     <string name="menu_settings">Nastavení</string>
     <string name="now">Nyní</string>
     <string name="rel_controls">Ovládá</string>

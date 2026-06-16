@@ -2,9 +2,13 @@ package com.organclock;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -23,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -40,6 +45,9 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
     static final String EXTRA_PAGE = "page";
+
+    private static final int REQ_RINGTONE = 10;
+    private static final int REQ_FILE = 11;
 
     // Element accent colors in canonical order: Wood, Fire, Earth, Metal, Water.
     static final int[] ELEMENT5 = {0xFF4CAF50, 0xFFE53935, 0xFFC8A24B, 0xFF90A4AE, 0xFF1E88E5};
@@ -480,10 +488,108 @@ public class MainActivity extends Activity {
             root.addView(cb);
         }
 
+        root.addView(header(res.getString(R.string.sound_header)));
+        TextView current = new TextView(this);
+        current.setText(res.getString(R.string.sound_current_label) + ":  " + soundLabel());
+        current.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
+        current.setTextColor(colDim);
+        current.setPadding(0, dp(2), 0, dp(6));
+        root.addView(current);
+
+        root.addView(soundButton(res.getString(R.string.sound_choose_tone), v -> pickRingtone()));
+        root.addView(soundButton(res.getString(R.string.sound_pick_file), v -> pickFile()));
+        root.addView(soundButton(res.getString(R.string.sound_test), v -> testAlarm()));
+
         ScrollView scroll = new ScrollView(this);
         scroll.addView(root, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         return scroll;
+    }
+
+    private Button soundButton(String text, View.OnClickListener l) {
+        Button b = new Button(this);
+        b.setText(text);
+        b.setAllCaps(false);
+        b.setOnClickListener(l);
+        return b;
+    }
+
+    private String soundLabel() {
+        String s = sp.getString(OrganClockWidget.KEY_SOUND, "");
+        if (s == null || s.isEmpty()) {
+            return getString(R.string.sound_default);
+        }
+        try {
+            Ringtone r = RingtoneManager.getRingtone(this, Uri.parse(s));
+            String t = r != null ? r.getTitle(this) : null;
+            if (t != null && !t.isEmpty()) {
+                return t;
+            }
+        } catch (Exception ignored) {
+        }
+        return getString(R.string.sound_custom);
+    }
+
+    private void pickRingtone() {
+        Intent i = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        i.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM);
+        i.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, getString(R.string.ringtone_picker_title));
+        i.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+        i.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
+        String cur = sp.getString(OrganClockWidget.KEY_SOUND, "");
+        if (cur != null && !cur.isEmpty()) {
+            i.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(cur));
+        }
+        try {
+            startActivityForResult(i, REQ_RINGTONE);
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void pickFile() {
+        Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("audio/*");
+        i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        try {
+            startActivityForResult(i, REQ_FILE);
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void testAlarm() {
+        ensureNotificationPermission();
+        Intent i = new Intent(this, AlarmSoundService.class);
+        i.putExtra(AlarmSoundService.EXTRA_TITLE, getString(R.string.sound_test));
+        try {
+            startForegroundService(i);
+        } catch (Exception ignored) {
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int req, int res, Intent data) {
+        super.onActivityResult(req, res, data);
+        if (res != RESULT_OK || data == null) {
+            return;
+        }
+        if (req == REQ_RINGTONE) {
+            Uri u = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+            sp.edit().putString(OrganClockWidget.KEY_SOUND, u == null ? "" : u.toString()).apply();
+        } else if (req == REQ_FILE) {
+            Uri u = data.getData();
+            if (u != null) {
+                try {
+                    getContentResolver().takePersistableUriPermission(
+                            u, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                } catch (Exception ignored) {
+                }
+                sp.edit().putString(OrganClockWidget.KEY_SOUND, u.toString()).apply();
+            }
+        }
+        if (page == 2) {
+            showPage(2);
+        }
     }
 
     // ---- Page: Settings ----------------------------------------------------
