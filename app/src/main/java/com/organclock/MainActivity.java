@@ -53,18 +53,18 @@ public class MainActivity extends Activity {
     // Schematic meridian routes per slot: normalized (x,y) points on a front-facing
     // figure, traced on the correct aspect of the limb. Approximate, not atlas-grade.
     static final float[][] MERIDIAN_PATH = {
-            {0.44f, 0.11f, 0.40f, 0.14f, 0.40f, 0.35f, 0.40f, 0.50f, 0.39f, 0.72f, 0.385f, 0.90f, 0.40f, 0.96f}, // Gallbladder
-            {0.45f, 0.965f, 0.455f, 0.90f, 0.465f, 0.72f, 0.475f, 0.54f, 0.49f, 0.49f, 0.47f, 0.40f},           // Liver
-            {0.43f, 0.30f, 0.37f, 0.20f, 0.31f, 0.35f, 0.29f, 0.52f, 0.278f, 0.56f},                            // Lung
-            {0.285f, 0.56f, 0.30f, 0.52f, 0.32f, 0.35f, 0.37f, 0.19f, 0.46f, 0.13f, 0.49f, 0.10f},              // Large Intestine
-            {0.47f, 0.12f, 0.46f, 0.30f, 0.45f, 0.48f, 0.44f, 0.55f, 0.435f, 0.72f, 0.43f, 0.88f, 0.425f, 0.96f}, // Stomach
-            {0.455f, 0.96f, 0.45f, 0.90f, 0.46f, 0.72f, 0.47f, 0.54f, 0.47f, 0.45f, 0.46f, 0.33f},              // Spleen
-            {0.45f, 0.27f, 0.38f, 0.30f, 0.35f, 0.40f, 0.33f, 0.52f, 0.32f, 0.56f},                             // Heart
-            {0.32f, 0.56f, 0.345f, 0.52f, 0.36f, 0.35f, 0.40f, 0.20f, 0.44f, 0.24f, 0.47f, 0.13f},              // Small Intestine
-            {0.485f, 0.11f, 0.50f, 0.05f, 0.50f, 0.16f, 0.47f, 0.30f, 0.46f, 0.45f, 0.45f, 0.52f, 0.43f, 0.72f, 0.42f, 0.88f, 0.40f, 0.96f}, // Bladder
-            {0.44f, 0.975f, 0.46f, 0.90f, 0.47f, 0.72f, 0.48f, 0.54f, 0.485f, 0.45f, 0.47f, 0.30f},             // Kidney
-            {0.45f, 0.30f, 0.36f, 0.22f, 0.325f, 0.35f, 0.305f, 0.52f, 0.30f, 0.575f},                          // Pericardium
-            {0.305f, 0.565f, 0.325f, 0.52f, 0.345f, 0.35f, 0.385f, 0.20f, 0.44f, 0.12f, 0.46f, 0.10f},          // Triple Burner
+            {0.44f, 0.12f, 0.41f, 0.115f, 0.40f, 0.22f, 0.33f, 0.36f, 0.31f, 0.50f, 0.30f, 0.62f, 0.31f, 0.72f, 0.33f, 0.90f, 0.35f, 0.965f}, // Gallbladder (lateral)
+            {0.41f, 0.965f, 0.435f, 0.93f, 0.46f, 0.72f, 0.47f, 0.60f, 0.49f, 0.53f, 0.46f, 0.42f},             // Liver (inner leg)
+            {0.40f, 0.26f, 0.34f, 0.225f, 0.27f, 0.31f, 0.265f, 0.40f, 0.275f, 0.48f, 0.29f, 0.545f, 0.30f, 0.565f}, // Lung (front arm, radial/outer)
+            {0.30f, 0.565f, 0.275f, 0.48f, 0.265f, 0.40f, 0.27f, 0.31f, 0.33f, 0.215f, 0.43f, 0.155f, 0.48f, 0.115f}, // Large Intestine (back arm, radial)
+            {0.47f, 0.12f, 0.46f, 0.30f, 0.45f, 0.45f, 0.43f, 0.52f, 0.42f, 0.62f, 0.41f, 0.72f, 0.40f, 0.84f, 0.385f, 0.965f}, // Stomach (front of body & leg)
+            {0.40f, 0.965f, 0.43f, 0.93f, 0.45f, 0.72f, 0.46f, 0.60f, 0.46f, 0.48f, 0.44f, 0.36f},              // Spleen (medial leg, front)
+            {0.43f, 0.245f, 0.36f, 0.30f, 0.345f, 0.40f, 0.35f, 0.48f, 0.36f, 0.545f, 0.365f, 0.565f},          // Heart (front arm, ulnar/inner)
+            {0.365f, 0.565f, 0.36f, 0.48f, 0.355f, 0.40f, 0.37f, 0.31f, 0.42f, 0.225f, 0.48f, 0.19f, 0.54f, 0.15f}, // Small Intestine (back arm, ulnar)
+            {0.50f, 0.115f, 0.53f, 0.07f, 0.52f, 0.17f, 0.47f, 0.32f, 0.455f, 0.48f, 0.44f, 0.55f, 0.42f, 0.66f, 0.41f, 0.73f, 0.40f, 0.85f, 0.345f, 0.965f}, // Bladder (back of body & leg)
+            {0.40f, 0.975f, 0.44f, 0.93f, 0.47f, 0.72f, 0.48f, 0.60f, 0.485f, 0.46f, 0.46f, 0.30f},             // Kidney (medial leg, back)
+            {0.43f, 0.27f, 0.34f, 0.235f, 0.305f, 0.31f, 0.30f, 0.40f, 0.315f, 0.48f, 0.33f, 0.545f, 0.335f, 0.565f}, // Pericardium (front arm, middle)
+            {0.335f, 0.565f, 0.32f, 0.48f, 0.31f, 0.40f, 0.315f, 0.31f, 0.36f, 0.22f, 0.45f, 0.13f, 0.50f, 0.10f}, // Triple Burner (back arm, middle)
     };
     // Channels running on the back of the body/limb are drawn dashed.
     static final boolean[] MERIDIAN_DASHED = {
