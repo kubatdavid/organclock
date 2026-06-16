@@ -46,6 +46,8 @@ public class AlarmSoundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && ACTION_STOP.equals(intent.getAction())) {
+            stopSound();
+            stopForeground(Service.STOP_FOREGROUND_REMOVE);
             stopSelf();
             return START_NOT_STICKY;
         }
@@ -117,10 +119,11 @@ public class AlarmSoundService extends Service {
         PendingIntent stopPi = PendingIntent.getService(this, 0, stop,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        Intent open = new Intent(this, MainActivity.class);
-        open.putExtra(MainActivity.EXTRA_PAGE, 0);
-        open.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent openPi = PendingIntent.getActivity(this, 1, open,
+        // Tapping the notification (or the full-screen alarm) opens a big Stop screen.
+        Intent screen = new Intent(this, AlarmStopActivity.class);
+        screen.putExtra(AlarmStopActivity.EXTRA_TITLE, title);
+        screen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent screenPi = PendingIntent.getActivity(this, 1, screen,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         Notification.Builder b = new Notification.Builder(this, CHANNEL)
@@ -129,8 +132,10 @@ public class AlarmSoundService extends Service {
                 .setContentText(text)
                 .setCategory(Notification.CATEGORY_ALARM)
                 .setOngoing(true)
-                .setContentIntent(openPi)
-                .addAction(0, l.getString(R.string.alarm_stop), stopPi);
+                .setContentIntent(screenPi)
+                .setFullScreenIntent(screenPi, true)
+                .addAction(android.R.drawable.ic_menu_close_clear_cancel,
+                        l.getString(R.string.alarm_stop), stopPi);
         if (sub != null) {
             b.setSubText(sub);
         }
