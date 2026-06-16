@@ -74,6 +74,21 @@
         <item>Fire</item>
     </string-array>
 
+    <string-array name="meridian_route">
+        <item>Side of body &amp; outer leg · eye → 4th toe</item>
+        <item>Inner leg · big toe → ribs</item>
+        <item>Front of arm, thumb side · chest → thumb</item>
+        <item>Back of arm, index side · index → face</item>
+        <item>Front of body &amp; leg · face → 2nd toe</item>
+        <item>Inner leg, front · big toe → flank</item>
+        <item>Front of arm, little-finger side · armpit → little finger</item>
+        <item>Back of arm, little-finger side · little finger → ear</item>
+        <item>Back of body &amp; leg · inner eye → little toe</item>
+        <item>Inner leg, back · sole → chest</item>
+        <item>Front of arm, middle · chest → middle finger</item>
+        <item>Back of arm, middle · ring finger → brow</item>
+    </string-array>
+
     <string-array name="emotions">
         <item>Anger</item>
         <item>Anger</item>

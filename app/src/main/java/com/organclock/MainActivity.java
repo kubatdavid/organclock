@@ -50,10 +50,31 @@ public class MainActivity extends Activity {
     static final int[] CONTROLS = {2, 3, 4, 0, 1};      // element -> element it controls
     static final int[] CONTROLLED_BY = {3, 4, 0, 1, 2}; // element -> element controlling it
 
+    // Schematic meridian routes per slot: normalized (x,y) points on a front-facing
+    // figure, traced on the correct aspect of the limb. Approximate, not atlas-grade.
+    static final float[][] MERIDIAN_PATH = {
+            {0.44f, 0.11f, 0.40f, 0.14f, 0.40f, 0.35f, 0.40f, 0.50f, 0.39f, 0.72f, 0.385f, 0.90f, 0.40f, 0.96f}, // Gallbladder
+            {0.45f, 0.965f, 0.455f, 0.90f, 0.465f, 0.72f, 0.475f, 0.54f, 0.49f, 0.49f, 0.47f, 0.40f},           // Liver
+            {0.43f, 0.30f, 0.37f, 0.20f, 0.31f, 0.35f, 0.29f, 0.52f, 0.278f, 0.56f},                            // Lung
+            {0.285f, 0.56f, 0.30f, 0.52f, 0.32f, 0.35f, 0.37f, 0.19f, 0.46f, 0.13f, 0.49f, 0.10f},              // Large Intestine
+            {0.47f, 0.12f, 0.46f, 0.30f, 0.45f, 0.48f, 0.44f, 0.55f, 0.435f, 0.72f, 0.43f, 0.88f, 0.425f, 0.96f}, // Stomach
+            {0.455f, 0.96f, 0.45f, 0.90f, 0.46f, 0.72f, 0.47f, 0.54f, 0.47f, 0.45f, 0.46f, 0.33f},              // Spleen
+            {0.45f, 0.27f, 0.38f, 0.30f, 0.35f, 0.40f, 0.33f, 0.52f, 0.32f, 0.56f},                             // Heart
+            {0.32f, 0.56f, 0.345f, 0.52f, 0.36f, 0.35f, 0.40f, 0.20f, 0.44f, 0.24f, 0.47f, 0.13f},              // Small Intestine
+            {0.485f, 0.11f, 0.50f, 0.05f, 0.50f, 0.16f, 0.47f, 0.30f, 0.46f, 0.45f, 0.45f, 0.52f, 0.43f, 0.72f, 0.42f, 0.88f, 0.40f, 0.96f}, // Bladder
+            {0.44f, 0.975f, 0.46f, 0.90f, 0.47f, 0.72f, 0.48f, 0.54f, 0.485f, 0.45f, 0.47f, 0.30f},             // Kidney
+            {0.45f, 0.30f, 0.36f, 0.22f, 0.325f, 0.35f, 0.305f, 0.52f, 0.30f, 0.575f},                          // Pericardium
+            {0.305f, 0.565f, 0.325f, 0.52f, 0.345f, 0.35f, 0.385f, 0.20f, 0.44f, 0.12f, 0.46f, 0.10f},          // Triple Burner
+    };
+    // Channels running on the back of the body/limb are drawn dashed.
+    static final boolean[] MERIDIAN_DASHED = {
+            false, false, false, true, false, false, false, true, true, false, false, true};
+
     private SharedPreferences sp;
     private float density;
     private String builtLang;
     private int page;
+    private boolean showingMeridian;
 
     private FrameLayout content;
     private LinearLayout[] tabViews;
@@ -187,6 +208,7 @@ public class MainActivity extends Activity {
 
     private void showPage(int p) {
         page = p;
+        showingMeridian = false;
         for (int i = 0; i < tabViews.length; i++) {
             int tint = (i == p) ? colAccent : colIdle;
             ((ImageView) tabViews[i].getChildAt(0)).setColorFilter(tint);
@@ -232,6 +254,7 @@ public class MainActivity extends Activity {
             String relations =
                     controlsLabel + ": " + organsForElement(CONTROLS[e], organs) + "\n"
                     + controlledByLabel + ": " + organsForElement(CONTROLLED_BY[e], organs);
+            final int slot = i;
             View block = organBlock(
                     isNow ? nowLabel : null,
                     organs[i],
@@ -239,6 +262,7 @@ public class MainActivity extends Activity {
                     herbs[i],
                     relations,
                     OrganClockWidget.ELEMENT_COLOR[i]);
+            block.setOnClickListener(v -> showMeridian(slot));
             list.addView(block);
             if (isNow) {
                 activeBlock = block;
@@ -319,6 +343,67 @@ public class MainActivity extends Activity {
             block.addView(rel);
         }
         return block;
+    }
+
+    // ---- Meridian detail (opened by tapping an organ) ----------------------
+
+    private void showMeridian(int slot) {
+        showingMeridian = true;
+        Resources res = getResources();
+        String[] organs = res.getStringArray(R.array.organs);
+        String[] elements = res.getStringArray(R.array.elements);
+        String[] routes = res.getStringArray(R.array.meridian_route);
+
+        LinearLayout col = new LinearLayout(this);
+        col.setOrientation(LinearLayout.VERTICAL);
+        int pad = dp(16);
+        col.setPadding(pad, pad, pad, pad);
+
+        TextView back = new TextView(this);
+        back.setText("‹ " + res.getString(R.string.now));
+        back.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        back.setTextColor(colAccent);
+        back.setPadding(0, 0, 0, dp(10));
+        back.setOnClickListener(v -> showPage(0));
+        col.addView(back);
+
+        TextView name = new TextView(this);
+        name.setText(organs[slot]);
+        name.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
+        name.setTypeface(name.getTypeface(), Typeface.BOLD);
+        name.setCompoundDrawablesWithIntrinsicBounds(
+                dot(OrganClockWidget.ELEMENT_COLOR[slot], dp(16)), null, null, null);
+        name.setCompoundDrawablePadding(dp(10));
+        col.addView(name);
+
+        TextView caption = new TextView(this);
+        caption.setText(elements[slot] + "  ·  " + routes[slot]);
+        caption.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
+        caption.setTextColor(colDim);
+        caption.setPadding(0, dp(2), 0, dp(10));
+        col.addView(caption);
+
+        int limbColor = dark ? 0x33FFFFFF : 0x1F000000;
+        MeridianView mv = new MeridianView(this, MERIDIAN_PATH[slot],
+                OrganClockWidget.ELEMENT_COLOR[slot], MERIDIAN_DASHED[slot], limbColor);
+        mv.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        col.addView(mv);
+
+        ScrollView scroll = new ScrollView(this);
+        scroll.addView(col, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        content.removeAllViews();
+        content.addView(scroll);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (showingMeridian) {
+            showPage(0);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     // ---- Page: Elements ----------------------------------------------------

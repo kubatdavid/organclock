@@ -61,6 +61,21 @@
         <item>Oheň</item>
     </string-array>
 
+    <string-array name="meridian_route">
+        <item>Bok těla a vnější strana nohy · oko → 4. prst nohy</item>
+        <item>Vnitřní strana nohy · palec nohy → žebra</item>
+        <item>Přední strana paže, palcová strana · hruď → palec</item>
+        <item>Zadní strana paže, strana ukazováku · ukazovák → obličej</item>
+        <item>Přední strana těla a nohy · obličej → 2. prst nohy</item>
+        <item>Vnitřní strana nohy, vpředu · palec nohy → bok</item>
+        <item>Přední strana paže, strana malíku · podpaží → malík</item>
+        <item>Zadní strana paže, strana malíku · malík → ucho</item>
+        <item>Zadní strana těla a nohy · vnitřní koutek oka → malíček nohy</item>
+        <item>Vnitřní strana nohy, vzadu · chodidlo → hruď</item>
+        <item>Přední strana paže, uprostřed · hruď → prostředník</item>
+        <item>Zadní strana paže, uprostřed · prsteník → obočí</item>
+    </string-array>
+
     <string-array name="emotions">
         <item>Hněv</item>
         <item>Hněv</item>
