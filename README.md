@@ -8,10 +8,14 @@ automatically every 2 hours.
 There's a small settings screen to pick the display language and choose which
 organs should notify you when they become active.
 
-## Settings
+## App & settings
 
-Open settings by **tapping the widget**, or from the **Organ Clock** icon in the
-app drawer. Two sections:
+**Tapping the widget** (or a notification) opens the app on a scrolling list of
+all twelve organs — element · emotion · time window · herbs each — scrolled to
+and highlighting the one active *now*. The same screen opens from the **Organ
+Clock** icon in the app drawer.
+
+From the app's overflow menu (⋮) choose **Settings**. Two sections:
 
 - **Language** — *System default*, *English*, or *Čeština*. This overrides the
   phone language for this app only; the widget and notifications both follow it.

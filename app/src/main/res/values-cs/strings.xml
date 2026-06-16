@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">Orgánové hodiny</string>
     <string name="channel_name">Aktivní orgán</string>
+    <string name="menu_settings">Nastavení</string>
+    <string name="now">Nyní</string>
     <string name="settings_language">Jazyk</string>
     <string name="settings_notify">Upozornit, když je aktivní</string>
     <string name="lang_system">Podle systému</string>

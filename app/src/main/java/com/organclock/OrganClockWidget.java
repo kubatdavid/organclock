@@ -102,10 +102,9 @@ public class OrganClockWidget extends AppWidgetProvider {
         String[] organs = res.getStringArray(R.array.organs);
         String[] herbs = res.getStringArray(R.array.herbs);
         String[] emotions = res.getStringArray(R.array.emotions);
-        String[] elements = res.getStringArray(R.array.elements);
 
         int slot = currentSlot();
-        String subtitle = windows[slot] + "  ·  " + elements[slot] + "  ·  " + emotions[slot];
+        String subtitle = windows[slot] + "  ·  " + emotions[slot];
 
         AppWidgetManager mgr = AppWidgetManager.getInstance(ctx);
         int[] ids = mgr.getAppWidgetIds(new ComponentName(ctx, OrganClockWidget.class));
@@ -114,7 +113,7 @@ public class OrganClockWidget extends AppWidgetProvider {
             v.setTextViewText(R.id.window, subtitle);
             v.setTextViewText(R.id.organ, organs[slot]);
             v.setTextViewText(R.id.herbs, herbs[slot]);
-            v.setOnClickPendingIntent(R.id.root, settingsIntent(ctx));
+            v.setOnClickPendingIntent(R.id.root, detailIntent(ctx));
             mgr.updateAppWidget(id, v);
         }
 
@@ -163,7 +162,7 @@ public class OrganClockWidget extends AppWidgetProvider {
                 .setContentText(herbs[slot])
                 .setSubText(subtitle)
                 .setStyle(new Notification.BigTextStyle().bigText(herbs[slot]))
-                .setContentIntent(settingsIntent(ctx))
+                .setContentIntent(detailIntent(ctx))
                 .setAutoCancel(true)
                 .build();
         nm.notify(NOTIFICATION_ID, n);
@@ -196,8 +195,8 @@ public class OrganClockWidget extends AppWidgetProvider {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
-    static PendingIntent settingsIntent(Context ctx) {
-        Intent i = new Intent(ctx, SettingsActivity.class);
+    static PendingIntent detailIntent(Context ctx) {
+        Intent i = new Intent(ctx, DetailActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return PendingIntent.getActivity(
                 ctx, 1, i,
