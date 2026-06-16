@@ -61,6 +61,42 @@
         <item>Oheň</item>
     </string-array>
 
+    <string name="assoc_header">Souvislosti</string>
+    <string name="lbl_sense">Otvírá se do</string>
+    <string name="lbl_tissue">Tkáň</string>
+    <string name="lbl_reflects">Projevuje se v</string>
+    <string name="lbl_taste">Chuť</string>
+    <string name="lbl_season">Roční období</string>
+    <string name="lbl_climate">Počasí</string>
+    <string name="lbl_fluid">Tekutina</string>
+    <string name="lbl_color">Barva</string>
+
+    <!-- Souvislosti podle prvku, pořadí: Dřevo, Oheň, Země, Kov, Voda -->
+    <string-array name="assoc_sense">
+        <item>Oči</item><item>Jazyk</item><item>Ústa</item><item>Nos</item><item>Uši</item>
+    </string-array>
+    <string-array name="assoc_tissue">
+        <item>Šlachy</item><item>Cévy</item><item>Svaly</item><item>Kůže</item><item>Kosti (a zuby)</item>
+    </string-array>
+    <string-array name="assoc_reflects">
+        <item>Nehty</item><item>Pleť</item><item>Rty</item><item>Ochlupení</item><item>Vlasy</item>
+    </string-array>
+    <string-array name="assoc_taste">
+        <item>Kyselá</item><item>Hořká</item><item>Sladká</item><item>Ostrá</item><item>Slaná</item>
+    </string-array>
+    <string-array name="assoc_season">
+        <item>Jaro</item><item>Léto</item><item>Pozdní léto</item><item>Podzim</item><item>Zima</item>
+    </string-array>
+    <string-array name="assoc_climate">
+        <item>Vítr</item><item>Horko</item><item>Vlhko</item><item>Sucho</item><item>Chlad</item>
+    </string-array>
+    <string-array name="assoc_fluid">
+        <item>Slzy</item><item>Pot</item><item>Sliny</item><item>Hlen</item><item>Slina</item>
+    </string-array>
+    <string-array name="assoc_color">
+        <item>Zelená</item><item>Červená</item><item>Žlutá</item><item>Bílá</item><item>Černá</item>
+    </string-array>
+
     <string-array name="meridian_route">
         <item>Bok těla a vnější strana nohy · oko → 4. prst nohy</item>
         <item>Vnitřní strana nohy · palec nohy → žebra</item>

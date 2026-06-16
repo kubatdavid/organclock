@@ -16,9 +16,11 @@ navigation bar with four tabs:
 - **Now** — all twelve organs listed (colored element dot, organ name,
   element · emotion · time window, herbs, plus which organs it controls and is
   controlled by via the five-element controlling cycle), scrolled to and
-  highlighting the one active *now*. **Tap an organ** to see its meridian traced
-  on a body figure (schematic — shows which side of the limb it runs, front
-  solid / back dashed; not an acupoint atlas).
+  highlighting the one active *now*. **Tap an organ** to open its detail: TCM
+  correspondences (sense organ it opens to, tissue, what it reflects in, taste,
+  season, climate, fluid, color) plus a schematic meridian traced on a body
+  figure (shows which side of the limb it runs, front solid / back dashed; not
+  an acupoint atlas).
 - **Elements** — a five-element diagram (drawn in code, no image assets) showing
   the **generating (Sheng)** cycle around the pentagon and the **controlling
   (Ke)** cycle across the star, with a legend and both cycles written out.

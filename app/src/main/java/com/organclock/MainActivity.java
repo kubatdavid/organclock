@@ -383,6 +383,21 @@ public class MainActivity extends Activity {
         caption.setPadding(0, dp(2), 0, dp(10));
         col.addView(caption);
 
+        int e = SLOT_ELEMENT[slot];
+        col.addView(header(res.getString(R.string.assoc_header)));
+        col.addView(assocRow(res.getString(R.string.lbl_sense), res.getStringArray(R.array.assoc_sense)[e]));
+        col.addView(assocRow(res.getString(R.string.lbl_tissue), res.getStringArray(R.array.assoc_tissue)[e]));
+        col.addView(assocRow(res.getString(R.string.lbl_reflects), res.getStringArray(R.array.assoc_reflects)[e]));
+        col.addView(assocRow(res.getString(R.string.lbl_taste), res.getStringArray(R.array.assoc_taste)[e]));
+        col.addView(assocRow(res.getString(R.string.lbl_season), res.getStringArray(R.array.assoc_season)[e]));
+        col.addView(assocRow(res.getString(R.string.lbl_climate), res.getStringArray(R.array.assoc_climate)[e]));
+        col.addView(assocRow(res.getString(R.string.lbl_fluid), res.getStringArray(R.array.assoc_fluid)[e]));
+        col.addView(assocRow(res.getString(R.string.lbl_color), res.getStringArray(R.array.assoc_color)[e]));
+
+        TextView diagramSpacer = new TextView(this);
+        diagramSpacer.setPadding(0, dp(10), 0, 0);
+        col.addView(diagramSpacer);
+
         int limbColor = dark ? 0x33FFFFFF : 0x1F000000;
         MeridianView mv = new MeridianView(this, MERIDIAN_PATH[slot],
                 OrganClockWidget.ELEMENT_COLOR[slot], MERIDIAN_DASHED[slot], limbColor);
@@ -587,6 +602,25 @@ public class MainActivity extends Activity {
         tv.setPadding(0, dp(18), 0, dp(8));
         tv.setTypeface(tv.getTypeface(), Typeface.BOLD);
         return tv;
+    }
+
+    private View assocRow(String label, String value) {
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setPadding(0, dp(3), 0, dp(3));
+        TextView l = new TextView(this);
+        l.setText(label);
+        l.setTextColor(colDim);
+        l.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
+        l.setWidth(dp(130));
+        TextView v = new TextView(this);
+        v.setText(value);
+        v.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
+        v.setLayoutParams(new LinearLayout.LayoutParams(0,
+                ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        row.addView(l);
+        row.addView(v);
+        return row;
     }
 
     private GradientDrawable dot(int color, int sizePx) {

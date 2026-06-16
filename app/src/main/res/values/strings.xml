@@ -74,6 +74,42 @@
         <item>Fire</item>
     </string-array>
 
+    <string name="assoc_header">Associations</string>
+    <string name="lbl_sense">Opens to</string>
+    <string name="lbl_tissue">Tissue</string>
+    <string name="lbl_reflects">Reflects in</string>
+    <string name="lbl_taste">Taste</string>
+    <string name="lbl_season">Season</string>
+    <string name="lbl_climate">Climate</string>
+    <string name="lbl_fluid">Fluid</string>
+    <string name="lbl_color">Color</string>
+
+    <!-- Element-level correspondences, order: Wood, Fire, Earth, Metal, Water -->
+    <string-array name="assoc_sense">
+        <item>Eyes</item><item>Tongue</item><item>Mouth</item><item>Nose</item><item>Ears</item>
+    </string-array>
+    <string-array name="assoc_tissue">
+        <item>Tendons</item><item>Blood vessels</item><item>Muscles</item><item>Skin</item><item>Bones (&amp; teeth)</item>
+    </string-array>
+    <string-array name="assoc_reflects">
+        <item>Nails</item><item>Complexion</item><item>Lips</item><item>Body hair</item><item>Head hair</item>
+    </string-array>
+    <string-array name="assoc_taste">
+        <item>Sour</item><item>Bitter</item><item>Sweet</item><item>Pungent</item><item>Salty</item>
+    </string-array>
+    <string-array name="assoc_season">
+        <item>Spring</item><item>Summer</item><item>Late summer</item><item>Autumn</item><item>Winter</item>
+    </string-array>
+    <string-array name="assoc_climate">
+        <item>Wind</item><item>Heat</item><item>Dampness</item><item>Dryness</item><item>Cold</item>
+    </string-array>
+    <string-array name="assoc_fluid">
+        <item>Tears</item><item>Sweat</item><item>Saliva</item><item>Mucus</item><item>Spittle</item>
+    </string-array>
+    <string-array name="assoc_color">
+        <item>Green</item><item>Red</item><item>Yellow</item><item>White</item><item>Black</item>
+    </string-array>
+
     <string-array name="meridian_route">
         <item>Side of body &amp; outer leg · eye → 4th toe</item>
         <item>Inner leg · big toe → ribs</item>
