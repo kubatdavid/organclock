@@ -4,6 +4,18 @@
     <string name="channel_name">Aktivní orgán</string>
     <string name="menu_settings">Nastavení</string>
     <string name="now">Nyní</string>
+    <string name="screen_elements">Živly</string>
+    <string name="cycle_generating">Tvořivý (Šeng)</string>
+    <string name="cycle_controlling">Ovládací (Kche)</string>
+    <string name="elements_intro">Každý živel vyživuje další (tvořivý cyklus) a jiný krotí (ovládací cyklus).</string>
+
+    <string-array name="element_names">
+        <item>Dřevo</item>
+        <item>Oheň</item>
+        <item>Země</item>
+        <item>Kov</item>
+        <item>Voda</item>
+    </string-array>
     <string name="settings_language">Jazyk</string>
     <string name="settings_notify">Upozornit, když je aktivní</string>
     <string name="lang_system">Podle systému</string>

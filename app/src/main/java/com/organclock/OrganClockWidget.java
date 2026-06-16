@@ -25,13 +25,13 @@ import java.util.Locale;
  * The day is split into twelve 2-hour windows, each linked to an organ that is
  * considered most active during that window. We show the active organ (large)
  * and a few supporting herbs (small), and can optionally post a notification
- * when a user-selected organ becomes active. Settings live in SettingsActivity.
+ * when a user-selected organ becomes active. The app UI lives in MainActivity.
  */
 public class OrganClockWidget extends AppWidgetProvider {
 
     static final String ACTION_TICK = "com.organclock.TICK";
 
-    // Shared preferences (also read/written by SettingsActivity).
+    // Shared preferences (also read/written by MainActivity).
     static final String PREFS = "organclock";
     static final String KEY_LANG = "lang";            // "" = system, "en", "cs"
     static final String KEY_NOTIFY = "notify_";       // + slot index -> boolean
@@ -212,7 +212,8 @@ public class OrganClockWidget extends AppWidgetProvider {
     }
 
     static PendingIntent detailIntent(Context ctx) {
-        Intent i = new Intent(ctx, DetailActivity.class);
+        Intent i = new Intent(ctx, MainActivity.class);
+        i.putExtra(MainActivity.EXTRA_PAGE, 0); // open on the "Now" tab
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return PendingIntent.getActivity(
                 ctx, 1, i,

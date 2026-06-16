@@ -8,14 +8,24 @@ automatically every 2 hours.
 There's a small settings screen to pick the display language and choose which
 organs should notify you when they become active.
 
-## App & settings
+## App
 
-**Tapping the widget** (or a notification) opens the app on a scrolling list of
-all twelve organs — element · emotion · time window · herbs each — scrolled to
-and highlighting the one active *now*. The same screen opens from the **Organ
-Clock** icon in the app drawer.
+**Tapping the widget** (or a notification) opens the app, which has a bottom
+navigation bar with three tabs:
 
-From the app's overflow menu (⋮) choose **Settings**. Two sections:
+- **Now** — all twelve organs listed (colored element dot, organ name,
+  element · emotion · time window, herbs), scrolled to and highlighting the one
+  active *now*.
+- **Elements** — a five-element diagram (drawn in code, no image assets) showing
+  the **generating (Sheng)** cycle around the pentagon and the **controlling
+  (Ke)** cycle across the star, with a legend and both cycles written out.
+- **Settings** — see below.
+
+The app also opens from the **Organ Clock** icon in the app drawer.
+
+## Settings
+
+On the **Settings** tab, two sections:
 
 - **Language** — *System default*, *English*, or *Čeština*. This overrides the
   phone language for this app only; the widget and notifications both follow it.
