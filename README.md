@@ -18,9 +18,7 @@ navigation bar with four tabs:
   controlled by via the five-element controlling cycle), scrolled to and
   highlighting the one active *now*. **Tap an organ** to open its detail: TCM
   correspondences (sense organ it opens to, tissue, what it reflects in, taste,
-  season, climate, fluid, color) plus a schematic meridian traced on a body
-  figure (shows which side of the limb it runs, front solid / back dashed; not
-  an acupoint atlas).
+  season, climate, fluid, color).
 - **Elements** — a five-element diagram (drawn in code, no image assets) showing
   the **generating (Sheng)** cycle around the pentagon and the **controlling
   (Ke)** cycle across the star, with a legend and both cycles written out.
@@ -109,13 +107,6 @@ Easiest, no cable needed:
 
 This is a *debug-signed* APK, which is fine for personal use. Updates: bump
 `versionCode` in `app/build.gradle`, push, rebuild, and install over the top.
-
-## Credits
-
-- Body silhouette (`app/src/main/assets/body_path.txt`, drawn by
-  [MeridianView.java](app/src/main/java/com/organclock/MeridianView.java)):
-  public domain (CC0), "pitr" via the Open Clip Art Library / Wikimedia Commons
-  (*Man standing silhouette.svg*). The meridian routes drawn on top are original.
 
 ## Notes
 
