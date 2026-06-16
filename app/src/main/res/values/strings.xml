@@ -38,6 +38,21 @@
         <item>Triple Burner</item>
     </string-array>
 
+    <string-array name="emotions">
+        <item>Anger</item>
+        <item>Anger</item>
+        <item>Grief</item>
+        <item>Grief</item>
+        <item>Worry</item>
+        <item>Worry</item>
+        <item>Joy</item>
+        <item>Joy</item>
+        <item>Fear</item>
+        <item>Fear</item>
+        <item>Joy</item>
+        <item>Joy</item>
+    </string-array>
+
     <string-array name="herbs">
         <item>Dandelion root · Milk thistle · Bupleurum · Turmeric</item>
         <item>Milk thistle · Bupleurum · Schisandra · Dandelion</item>

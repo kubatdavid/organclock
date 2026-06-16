@@ -101,14 +101,16 @@ public class OrganClockWidget extends AppWidgetProvider {
         String[] windows = res.getStringArray(R.array.windows);
         String[] organs = res.getStringArray(R.array.organs);
         String[] herbs = res.getStringArray(R.array.herbs);
+        String[] emotions = res.getStringArray(R.array.emotions);
 
         int slot = currentSlot();
+        String subtitle = windows[slot] + "  ·  " + emotions[slot];
 
         AppWidgetManager mgr = AppWidgetManager.getInstance(ctx);
         int[] ids = mgr.getAppWidgetIds(new ComponentName(ctx, OrganClockWidget.class));
         for (int id : ids) {
             RemoteViews v = new RemoteViews(ctx.getPackageName(), R.layout.widget);
-            v.setTextViewText(R.id.window, windows[slot]);
+            v.setTextViewText(R.id.window, subtitle);
             v.setTextViewText(R.id.organ, organs[slot]);
             v.setTextViewText(R.id.herbs, herbs[slot]);
             v.setOnClickPendingIntent(R.id.root, settingsIntent(ctx));
@@ -120,7 +122,7 @@ public class OrganClockWidget extends AppWidgetProvider {
         SharedPreferences sp = prefs(ctx);
         if (sp.getInt(KEY_LAST_SLOT, -1) != slot) {
             sp.edit().putInt(KEY_LAST_SLOT, slot).apply();
-            maybeNotify(ctx, slot, organs, herbs, windows);
+            maybeNotify(ctx, slot, organs, herbs, subtitle);
         }
 
         scheduleNextBoundary(ctx);
@@ -136,7 +138,7 @@ public class OrganClockWidget extends AppWidgetProvider {
         return false;
     }
 
-    static void maybeNotify(Context ctx, int slot, String[] organs, String[] herbs, String[] windows) {
+    static void maybeNotify(Context ctx, int slot, String[] organs, String[] herbs, String subtitle) {
         if (!prefs(ctx).getBoolean(KEY_NOTIFY + slot, false)) {
             return;
         }
@@ -158,7 +160,7 @@ public class OrganClockWidget extends AppWidgetProvider {
                 .setSmallIcon(R.drawable.ic_stat)
                 .setContentTitle(organs[slot])
                 .setContentText(herbs[slot])
-                .setSubText(windows[slot])
+                .setSubText(subtitle)
                 .setStyle(new Notification.BigTextStyle().bigText(herbs[slot]))
                 .setContentIntent(settingsIntent(ctx))
                 .setAutoCancel(true)

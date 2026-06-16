@@ -25,6 +25,21 @@
         <item>Trojitý ohřívač</item>
     </string-array>
 
+    <string-array name="emotions">
+        <item>Hněv</item>
+        <item>Hněv</item>
+        <item>Smutek</item>
+        <item>Smutek</item>
+        <item>Starost</item>
+        <item>Starost</item>
+        <item>Radost</item>
+        <item>Radost</item>
+        <item>Strach</item>
+        <item>Strach</item>
+        <item>Radost</item>
+        <item>Radost</item>
+    </string-array>
+
     <string-array name="herbs">
         <item>Pampeliška (kořen) · Ostropestřec · Prorostlík · Kurkuma</item>
         <item>Ostropestřec · Prorostlík · Klanopraška · Pampeliška</item>

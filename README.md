@@ -25,20 +25,23 @@ reboots), as long as you've placed the widget or opened settings at least once.
 
 ## The schedule
 
-| Window        | Organ           |
-|---------------|-----------------|
-| 23:00 – 01:00 | Gallbladder     |
-| 01:00 – 03:00 | Liver           |
-| 03:00 – 05:00 | Lung            |
-| 05:00 – 07:00 | Large Intestine |
-| 07:00 – 09:00 | Stomach         |
-| 09:00 – 11:00 | Spleen          |
-| 11:00 – 13:00 | Heart           |
-| 13:00 – 15:00 | Small Intestine |
-| 15:00 – 17:00 | Bladder         |
-| 17:00 – 19:00 | Kidney          |
-| 19:00 – 21:00 | Pericardium     |
-| 21:00 – 23:00 | Triple Burner   |
+| Window        | Organ           | Emotion |
+|---------------|-----------------|---------|
+| 23:00 – 01:00 | Gallbladder     | Anger   |
+| 01:00 – 03:00 | Liver           | Anger   |
+| 03:00 – 05:00 | Lung            | Grief   |
+| 05:00 – 07:00 | Large Intestine | Grief   |
+| 07:00 – 09:00 | Stomach         | Worry   |
+| 09:00 – 11:00 | Spleen          | Worry   |
+| 11:00 – 13:00 | Heart           | Joy     |
+| 13:00 – 15:00 | Small Intestine | Joy     |
+| 15:00 – 17:00 | Bladder         | Fear    |
+| 17:00 – 19:00 | Kidney          | Fear    |
+| 19:00 – 21:00 | Pericardium     | Joy     |
+| 21:00 – 23:00 | Triple Burner   | Joy     |
+
+The emotion follows the organ's five-element (Wood→Anger, Fire→Joy, Earth→Worry,
+Metal→Grief, Water→Fear), shown on the small subtitle line beside the time window.
 
 ## Editing the text / translations
 
@@ -49,8 +52,9 @@ is set to (Czech if the phone is in Czech, English otherwise).
 - English (default): `app/src/main/res/values/strings.xml`
 - Czech: `app/src/main/res/values-cs/strings.xml`
 
-Each file has three lists — `windows`, `organs`, `herbs` — with 12 `<item>`s, one
-per 2-hour slot, in the order shown in the table above (Gallbladder first). Edit
+Each file has four lists — `windows`, `organs`, `emotions`, `herbs` — with 12
+`<item>`s, one per 2-hour slot, in the order shown in the table above
+(Gallbladder first). Edit
 the `<item>` text, push, rebuild, reinstall. Czech only overrides `organs` and
 `herbs`; the time `windows` fall back to the default file. To add another
 language, copy `values/` to `values-<code>/` (e.g. `values-de/`) and translate.
