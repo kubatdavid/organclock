@@ -160,6 +160,7 @@ public class OrganClockWidget extends AppWidgetProvider {
         i.putExtra(AlarmSoundService.EXTRA_TITLE, organs[slot]);
         i.putExtra(AlarmSoundService.EXTRA_TEXT, herbs[slot]);
         i.putExtra(AlarmSoundService.EXTRA_SUB, subtitle);
+        i.putExtra(AlarmSoundService.EXTRA_COLOR, ELEMENT_COLOR[slot]);
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 ctx.startForegroundService(i);

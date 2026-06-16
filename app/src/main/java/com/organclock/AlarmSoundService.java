@@ -29,6 +29,7 @@ public class AlarmSoundService extends Service {
     static final String EXTRA_TITLE = "title";
     static final String EXTRA_TEXT = "text";
     static final String EXTRA_SUB = "sub";
+    static final String EXTRA_COLOR = "color";
 
     private static final String CHANNEL = "organ_alarm";
     private static final int NOTIF_ID = 7;
@@ -55,6 +56,7 @@ public class AlarmSoundService extends Service {
         String title = intent != null ? intent.getStringExtra(EXTRA_TITLE) : null;
         String text = intent != null ? intent.getStringExtra(EXTRA_TEXT) : null;
         String sub = intent != null ? intent.getStringExtra(EXTRA_SUB) : null;
+        int color = intent != null ? intent.getIntExtra(EXTRA_COLOR, 0) : 0;
         if (title == null) {
             title = getString(R.string.app_name);
         }
@@ -62,7 +64,7 @@ public class AlarmSoundService extends Service {
             text = "";
         }
 
-        Notification n = buildNotification(title, text, sub);
+        Notification n = buildNotification(title, text, sub, color);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(NOTIF_ID, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
         } else {
@@ -107,7 +109,7 @@ public class AlarmSoundService extends Service {
         return def;
     }
 
-    private Notification buildNotification(String title, String text, String sub) {
+    private Notification buildNotification(String title, String text, String sub, int color) {
         Context l = OrganClockWidget.localized(this);
         NotificationManager nm = getSystemService(NotificationManager.class);
         NotificationChannel ch = new NotificationChannel(
@@ -122,6 +124,9 @@ public class AlarmSoundService extends Service {
         // Tapping the notification (or the full-screen alarm) opens a big Stop screen.
         Intent screen = new Intent(this, AlarmStopActivity.class);
         screen.putExtra(AlarmStopActivity.EXTRA_TITLE, title);
+        if (color != 0) {
+            screen.putExtra(AlarmStopActivity.EXTRA_COLOR, color);
+        }
         screen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent screenPi = PendingIntent.getActivity(this, 1, screen,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
