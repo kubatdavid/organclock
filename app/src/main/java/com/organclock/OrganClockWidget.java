@@ -1,34 +1,71 @@
 package com.organclock;
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Build;
 import android.widget.RemoteViews;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * TCM "organ clock" home-screen widget.
  *
  * The day is split into twelve 2-hour windows, each linked to an organ that is
  * considered most active during that window. We show the active organ (large)
- * and a few supporting herbs (small). No network, no permissions, no UI activity.
+ * and a few supporting herbs (small), and can optionally post a notification
+ * when a user-selected organ becomes active. Settings live in SettingsActivity.
  */
 public class OrganClockWidget extends AppWidgetProvider {
 
     static final String ACTION_TICK = "com.organclock.TICK";
 
-    // The organ/window/herb text lives in res/values*/strings.xml so it can be
+    // Shared preferences (also read/written by SettingsActivity).
+    static final String PREFS = "organclock";
+    static final String KEY_LANG = "lang";            // "" = system, "en", "cs"
+    static final String KEY_NOTIFY = "notify_";       // + slot index -> boolean
+    static final String KEY_LAST_SLOT = "last_slot";  // last slot we notified for
+
+    static final String CHANNEL_ID = "organ_active";
+    static final int NOTIFICATION_ID = 1;
+
+    // Organ/window/herb text lives in res/values*/strings.xml so it can be
     // localized (see values-cs/ for Czech). Slots are indexed 0..11 starting at
     // the 23:00 window (Gallbladder).
 
     /** Map a 24h hour (0..23) to its 2-hour slot index. */
     static int slotForHour(int hour) {
         return ((hour + 1) / 2) % 12;
+    }
+
+    static int currentSlot() {
+        return slotForHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+    }
+
+    static SharedPreferences prefs(Context ctx) {
+        return ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+    }
+
+    /** Returns a context whose resources use the user-chosen language override. */
+    static Context localized(Context ctx) {
+        String lang = prefs(ctx).getString(KEY_LANG, "");
+        if (lang.isEmpty()) {
+            return ctx;
+        }
+        Configuration cfg = new Configuration(ctx.getResources().getConfiguration());
+        cfg.setLocale(new Locale(lang));
+        return ctx.createConfigurationContext(cfg);
     }
 
     @Override
@@ -39,38 +76,94 @@ public class OrganClockWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context ctx, Intent intent) {
         super.onReceive(ctx, intent);
-        if (ACTION_TICK.equals(intent.getAction())) {
+        String action = intent.getAction();
+        if (ACTION_TICK.equals(action) || Intent.ACTION_BOOT_COMPLETED.equals(action)) {
             updateAll(ctx);
         }
     }
 
     @Override
     public void onDisabled(Context ctx) {
-        AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
-        if (am != null) {
-            am.cancel(tickIntent(ctx));
+        // Keep the alarm alive if the user still wants notifications without a widget.
+        if (anyNotifyEnabled(ctx)) {
+            scheduleNextBoundary(ctx);
+        } else {
+            AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
+            if (am != null) {
+                am.cancel(tickIntent(ctx));
+            }
         }
     }
 
     static void updateAll(Context ctx) {
+        Context l = localized(ctx);
+        Resources res = l.getResources();
+        String[] windows = res.getStringArray(R.array.windows);
+        String[] organs = res.getStringArray(R.array.organs);
+        String[] herbs = res.getStringArray(R.array.herbs);
+
+        int slot = currentSlot();
+
         AppWidgetManager mgr = AppWidgetManager.getInstance(ctx);
         int[] ids = mgr.getAppWidgetIds(new ComponentName(ctx, OrganClockWidget.class));
-
-        String[] windows = ctx.getResources().getStringArray(R.array.windows);
-        String[] organs = ctx.getResources().getStringArray(R.array.organs);
-        String[] herbs = ctx.getResources().getStringArray(R.array.herbs);
-
-        int slot = slotForHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
         for (int id : ids) {
             RemoteViews v = new RemoteViews(ctx.getPackageName(), R.layout.widget);
             v.setTextViewText(R.id.window, windows[slot]);
             v.setTextViewText(R.id.organ, organs[slot]);
             v.setTextViewText(R.id.herbs, herbs[slot]);
-            v.setOnClickPendingIntent(R.id.root, tickIntent(ctx));
+            v.setOnClickPendingIntent(R.id.root, settingsIntent(ctx));
             mgr.updateAppWidget(id, v);
         }
 
+        // Notify only on an actual slot transition, so the periodic safety
+        // refresh and boundary alarm never produce duplicate notifications.
+        SharedPreferences sp = prefs(ctx);
+        if (sp.getInt(KEY_LAST_SLOT, -1) != slot) {
+            sp.edit().putInt(KEY_LAST_SLOT, slot).apply();
+            maybeNotify(ctx, slot, organs, herbs, windows);
+        }
+
         scheduleNextBoundary(ctx);
+    }
+
+    static boolean anyNotifyEnabled(Context ctx) {
+        SharedPreferences sp = prefs(ctx);
+        for (int i = 0; i < 12; i++) {
+            if (sp.getBoolean(KEY_NOTIFY + i, false)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static void maybeNotify(Context ctx, int slot, String[] organs, String[] herbs, String[] windows) {
+        if (!prefs(ctx).getBoolean(KEY_NOTIFY + slot, false)) {
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && ctx.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            return; // permission not granted yet
+        }
+
+        NotificationManager nm = ctx.getSystemService(NotificationManager.class);
+        if (nm == null) {
+            return;
+        }
+        String channelName = localized(ctx).getString(R.string.channel_name);
+        nm.createNotificationChannel(new NotificationChannel(
+                CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_DEFAULT));
+
+        Notification n = new Notification.Builder(ctx, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_stat)
+                .setContentTitle(organs[slot])
+                .setContentText(herbs[slot])
+                .setSubText(windows[slot])
+                .setStyle(new Notification.BigTextStyle().bigText(herbs[slot]))
+                .setContentIntent(settingsIntent(ctx))
+                .setAutoCancel(true)
+                .build();
+        nm.notify(NOTIFICATION_ID, n);
     }
 
     /** Wake at the next 2-hour window boundary so the widget flips on time. */
@@ -97,6 +190,14 @@ public class OrganClockWidget extends AppWidgetProvider {
         i.setAction(ACTION_TICK);
         return PendingIntent.getBroadcast(
                 ctx, 0, i,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    }
+
+    static PendingIntent settingsIntent(Context ctx) {
+        Intent i = new Intent(ctx, SettingsActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        return PendingIntent.getActivity(
+                ctx, 1, i,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 }

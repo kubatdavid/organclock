@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Organ Clock</string>
+    <string name="channel_name">Active organ</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_notify">Notify me when active</string>
+    <string name="lang_system">System default</string>
+    <string name="lang_en">English</string>
+    <string name="lang_cs">Čeština</string>
 
     <string-array name="windows">
         <item>23:00 – 01:00</item>

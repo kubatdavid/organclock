@@ -5,7 +5,23 @@ A minimal Android home-screen widget. It shows the organ that is most active
 text), with a few supporting herbs beneath (small text). The display flips
 automatically every 2 hours.
 
-No network, no permissions, no settings screen — just the widget.
+There's a small settings screen to pick the display language and choose which
+organs should notify you when they become active.
+
+## Settings
+
+Open settings by **tapping the widget**, or from the **Organ Clock** icon in the
+app drawer. Two sections:
+
+- **Language** — *System default*, *English*, or *Čeština*. This overrides the
+  phone language for this app only; the widget and notifications both follow it.
+- **Notify me when active** — tick any organs you want a notification for. When a
+  ticked organ becomes active (on its 2-hour boundary), you get one notification
+  (organ name + herbs). The first time you enable one, Android asks for
+  notification permission — allow it, or notifications stay silent.
+
+Notifications keep working even without the widget on screen (they survive
+reboots), as long as you've placed the widget or opened settings at least once.
 
 ## The schedule
 

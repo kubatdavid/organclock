@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Orgánové hodiny</string>
+    <string name="channel_name">Aktivní orgán</string>
+    <string name="settings_language">Jazyk</string>
+    <string name="settings_notify">Upozornit, když je aktivní</string>
+    <string name="lang_system">Podle systému</string>
+    <string name="lang_en">English</string>
+    <string name="lang_cs">Čeština</string>
 
     <!-- Časová okna jsou jazykově neutrální, ale lze je zde také upravit. -->
 
