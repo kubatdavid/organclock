@@ -44,6 +44,12 @@ public class MainActivity extends Activity {
     // Element accent colors in canonical order: Wood, Fire, Earth, Metal, Water.
     static final int[] ELEMENT5 = {0xFF4CAF50, 0xFFE53935, 0xFFC8A24B, 0xFF90A4AE, 0xFF1E88E5};
 
+    // Element index (0=Wood,1=Fire,2=Earth,3=Metal,4=Water) per organ slot.
+    static final int[] SLOT_ELEMENT = {0, 0, 3, 3, 2, 2, 1, 1, 4, 4, 1, 1};
+    // Controlling cycle: Wood→Earth→Water→Fire→Metal→Wood.
+    static final int[] CONTROLS = {2, 3, 4, 0, 1};      // element -> element it controls
+    static final int[] CONTROLLED_BY = {3, 4, 0, 1, 2}; // element -> element controlling it
+
     private SharedPreferences sp;
     private float density;
     private String builtLang;
@@ -210,6 +216,8 @@ public class MainActivity extends Activity {
         String[] emotions = res.getStringArray(R.array.emotions);
         String[] herbs = res.getStringArray(R.array.herbs);
         String nowLabel = res.getString(R.string.now);
+        String controlsLabel = res.getString(R.string.rel_controls);
+        String controlledByLabel = res.getString(R.string.rel_controlled_by);
         int active = OrganClockWidget.currentSlot();
 
         LinearLayout list = new LinearLayout(this);
@@ -220,11 +228,16 @@ public class MainActivity extends Activity {
         View activeBlock = null;
         for (int i = 0; i < organs.length; i++) {
             boolean isNow = (i == active);
+            int e = SLOT_ELEMENT[i];
+            String relations =
+                    controlsLabel + ": " + organsForElement(CONTROLS[e], organs) + "\n"
+                    + controlledByLabel + ": " + organsForElement(CONTROLLED_BY[e], organs);
             View block = organBlock(
                     isNow ? nowLabel : null,
                     organs[i],
                     elements[i] + "  ·  " + emotions[i] + "  ·  " + windows[i],
                     herbs[i],
+                    relations,
                     OrganClockWidget.ELEMENT_COLOR[i]);
             list.addView(block);
             if (isNow) {
@@ -242,7 +255,21 @@ public class MainActivity extends Activity {
         return scroll;
     }
 
-    private View organBlock(String nowTag, String organ, String meta, String herbs, int color) {
+    private String organsForElement(int elem, String[] organs) {
+        StringBuilder sb = new StringBuilder();
+        for (int s = 0; s < SLOT_ELEMENT.length; s++) {
+            if (SLOT_ELEMENT[s] == elem) {
+                if (sb.length() > 0) {
+                    sb.append(", ");
+                }
+                sb.append(organs[s]);
+            }
+        }
+        return sb.toString();
+    }
+
+    private View organBlock(String nowTag, String organ, String meta, String herbs,
+                            String relations, int color) {
         LinearLayout block = new LinearLayout(this);
         block.setOrientation(LinearLayout.VERTICAL);
         int p = dp(14);
@@ -281,6 +308,16 @@ public class MainActivity extends Activity {
         herbsView.setText(herbs);
         herbsView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         block.addView(herbsView);
+
+        if (relations != null) {
+            TextView rel = new TextView(this);
+            rel.setText(relations);
+            rel.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+            rel.setTextColor(colDim);
+            rel.setLineSpacing(0, 1.1f);
+            rel.setPadding(0, dp(6), 0, 0);
+            block.addView(rel);
+        }
         return block;
     }
 

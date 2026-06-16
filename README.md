@@ -14,8 +14,9 @@ cycles, choose which organs notify you, and pick the language and theme.
 navigation bar with four tabs:
 
 - **Now** — all twelve organs listed (colored element dot, organ name,
-  element · emotion · time window, herbs), scrolled to and highlighting the one
-  active *now*.
+  element · emotion · time window, herbs, plus which organs it controls and is
+  controlled by via the five-element controlling cycle), scrolled to and
+  highlighting the one active *now*.
 - **Elements** — a five-element diagram (drawn in code, no image assets) showing
   the **generating (Sheng)** cycle around the pentagon and the **controlling
   (Ke)** cycle across the star, with a legend and both cycles written out.

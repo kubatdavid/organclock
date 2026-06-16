@@ -4,6 +4,8 @@
     <string name="channel_name">Aktivní orgán</string>
     <string name="menu_settings">Nastavení</string>
     <string name="now">Nyní</string>
+    <string name="rel_controls">Ovládá</string>
+    <string name="rel_controlled_by">Ovládán</string>
     <string name="screen_elements">Prvky</string>
     <string name="screen_alerts">Upozornění</string>
     <string name="settings_theme">Vzhled</string>
