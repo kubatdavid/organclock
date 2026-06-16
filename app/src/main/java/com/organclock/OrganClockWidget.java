@@ -189,10 +189,15 @@ public class OrganClockWidget extends AppWidgetProvider {
         }
         long t = c.getTimeInMillis();
         if (anyNotifyEnabled(ctx)) {
-            // Exact alarm clock: wakes the device, fires in Doze, bypasses DND as
-            // an alarm, and lets us start the foreground sound service from the
-            // resulting broadcast. Needs no SCHEDULE_EXACT_ALARM permission.
-            am.setAlarmClock(new AlarmManager.AlarmClockInfo(t, detailIntent(ctx)), tickIntent(ctx));
+            // Exact + wakes the device + fires in Doze, and lets us start the
+            // foreground sound service from the resulting broadcast. Uses the
+            // USE_EXACT_ALARM permission (granted at install for alarm apps).
+            try {
+                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, t, tickIntent(ctx));
+            } catch (SecurityException se) {
+                // exact-alarm permission unavailable: fall back to inexact
+                am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, t, tickIntent(ctx));
+            }
         } else {
             // Widget-only: inexact and battery-friendly.
             am.setAndAllowWhileIdle(AlarmManager.RTC, t, tickIntent(ctx));
