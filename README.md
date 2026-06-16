@@ -24,9 +24,20 @@ No network, no permissions, no settings screen — just the widget.
 | 19:00 – 21:00 | Pericardium     |
 | 21:00 – 23:00 | Triple Burner   |
 
-Organ names, windows, and the herb lists live in
-`app/src/main/java/com/organclock/OrganClockWidget.java` — edit the `ORGANS`,
-`WINDOWS`, and `HERBS` arrays to change the content.
+## Editing the text / translations
+
+All organ names, time windows, and herb lists live in string-resource files —
+**not** in the Java code. The widget automatically shows the language your phone
+is set to (Czech if the phone is in Czech, English otherwise).
+
+- English (default): `app/src/main/res/values/strings.xml`
+- Czech: `app/src/main/res/values-cs/strings.xml`
+
+Each file has three lists — `windows`, `organs`, `herbs` — with 12 `<item>`s, one
+per 2-hour slot, in the order shown in the table above (Gallbladder first). Edit
+the `<item>` text, push, rebuild, reinstall. Czech only overrides `organs` and
+`herbs`; the time `windows` fall back to the default file. To add another
+language, copy `values/` to `values-<code>/` (e.g. `values-de/`) and translate.
 
 ## Build the APK in the cloud (no tools on your PC)
 

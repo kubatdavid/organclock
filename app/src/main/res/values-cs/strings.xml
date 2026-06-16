@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Orgánové hodiny</string>
+
+    <!-- Časová okna jsou jazykově neutrální, ale lze je zde také upravit. -->
+
+    <string-array name="organs">
+        <item>Žlučník</item>
+        <item>Játra</item>
+        <item>Plíce</item>
+        <item>Tlusté střevo</item>
+        <item>Žaludek</item>
+        <item>Slezina</item>
+        <item>Srdce</item>
+        <item>Tenké střevo</item>
+        <item>Močový měchýř</item>
+        <item>Ledviny</item>
+        <item>Osrdečník</item>
+        <item>Trojitý ohřívač</item>
+    </string-array>
+
+    <string-array name="herbs">
+        <item>Pampeliška (kořen) · Ostropestřec · Prorostlík · Kurkuma</item>
+        <item>Ostropestřec · Prorostlík · Klanopraška · Pampeliška</item>
+        <item>Divizna · Kozinec · Lékořice · Oman pravý</item>
+        <item>Reveň · Jilm červený · Psyllium · Řešetlák</item>
+        <item>Zázvor · Máta peprná · Citrusová kůra · Lékořice</item>
+        <item>Ženšen · Atraktylodes · Kodonopsis · Zázvor</item>
+        <item>Hloh · Srdečník · Reishi · Klanopraška</item>
+        <item>Fenykl · Heřmánek · Kmín · Pampeliška</item>
+        <item>Kukuřičné blizny · Medvědice · Jitrocel · Proskurník</item>
+        <item>Rehmannie · Cordyceps · Kustovnice (goji) · Kopřiva (kořen)</item>
+        <item>Hloh · Růže · Šalvěj červenokořenná (Dan Shen) · Lípa</item>
+        <item>Skořice · Prorostlík · Zázvor · Fenykl</item>
+    </string-array>
+</resources>

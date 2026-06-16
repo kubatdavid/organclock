@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Organ Clock</string>
+
+    <string-array name="windows">
+        <item>23:00 – 01:00</item>
+        <item>01:00 – 03:00</item>
+        <item>03:00 – 05:00</item>
+        <item>05:00 – 07:00</item>
+        <item>07:00 – 09:00</item>
+        <item>09:00 – 11:00</item>
+        <item>11:00 – 13:00</item>
+        <item>13:00 – 15:00</item>
+        <item>15:00 – 17:00</item>
+        <item>17:00 – 19:00</item>
+        <item>19:00 – 21:00</item>
+        <item>21:00 – 23:00</item>
+    </string-array>
+
+    <string-array name="organs">
+        <item>Gallbladder</item>
+        <item>Liver</item>
+        <item>Lung</item>
+        <item>Large Intestine</item>
+        <item>Stomach</item>
+        <item>Spleen</item>
+        <item>Heart</item>
+        <item>Small Intestine</item>
+        <item>Bladder</item>
+        <item>Kidney</item>
+        <item>Pericardium</item>
+        <item>Triple Burner</item>
+    </string-array>
+
+    <string-array name="herbs">
+        <item>Dandelion root · Milk thistle · Bupleurum · Turmeric</item>
+        <item>Milk thistle · Bupleurum · Schisandra · Dandelion</item>
+        <item>Mullein · Astragalus · Licorice root · Elecampane</item>
+        <item>Rhubarb · Slippery elm · Psyllium · Cascara</item>
+        <item>Ginger · Peppermint · Citrus peel · Licorice</item>
+        <item>Ginseng · Atractylodes · Codonopsis · Ginger</item>
+        <item>Hawthorn · Motherwort · Reishi · Schisandra</item>
+        <item>Fennel · Chamomile · Caraway · Dandelion</item>
+        <item>Cornsilk · Uva ursi · Plantain · Marshmallow</item>
+        <item>Rehmannia · Cordyceps · Goji · Nettle root</item>
+        <item>Hawthorn · Rose · Salvia (Dan Shen) · Linden</item>
+        <item>Cinnamon · Bupleurum · Ginger · Fennel</item>
+    </string-array>
+</resources>
