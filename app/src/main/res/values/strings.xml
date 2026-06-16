@@ -5,6 +5,11 @@
     <string name="menu_settings">Settings</string>
     <string name="now">Now</string>
     <string name="screen_elements">Elements</string>
+    <string name="screen_alerts">Alerts</string>
+    <string name="settings_theme">Theme</string>
+    <string name="theme_system">System default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
     <string name="cycle_generating">Generating (Sheng)</string>
     <string name="cycle_controlling">Controlling (Ke)</string>
     <string name="elements_intro">Each element nourishes the next (generating) and restrains another (controlling).</string>

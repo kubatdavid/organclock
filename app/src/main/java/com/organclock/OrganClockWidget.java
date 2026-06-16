@@ -34,6 +34,7 @@ public class OrganClockWidget extends AppWidgetProvider {
     // Shared preferences (also read/written by MainActivity).
     static final String PREFS = "organclock";
     static final String KEY_LANG = "lang";            // "" = system, "en", "cs"
+    static final String KEY_THEME = "theme";          // "system", "light", "dark"
     static final String KEY_NOTIFY = "notify_";       // + slot index -> boolean
     static final String KEY_LAST_SLOT = "last_slot";  // last slot we notified for
 

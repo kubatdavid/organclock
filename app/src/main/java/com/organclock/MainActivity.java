@@ -3,6 +3,7 @@ package com.organclock;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -27,12 +28,14 @@ import android.widget.TextView;
 
 /**
  * Single-activity app with a custom bottom navigation bar (no external UI
- * dependencies). Three pages:
+ * dependencies). Four pages:
  *   0 Now      – every organ listed, scrolled to the active one
  *   1 Elements – the five-element generating/controlling diagram, drawn in code
- *   2 Settings – language override + per-organ notifications
+ *   2 Alerts   – per-organ notification toggles
+ *   3 Settings – theme + language
  *
- * The whole activity is localized via attachBaseContext.
+ * Localized via attachBaseContext; light/dark theme chosen in Settings and
+ * applied to the window plus all custom-drawn colors via a small palette.
  */
 public class MainActivity extends Activity {
 
@@ -40,9 +43,6 @@ public class MainActivity extends Activity {
 
     // Element accent colors in canonical order: Wood, Fire, Earth, Metal, Water.
     static final int[] ELEMENT5 = {0xFF4CAF50, 0xFFE53935, 0xFFC8A24B, 0xFF90A4AE, 0xFF1E88E5};
-
-    private static final int ACCENT = 0xFF3F51B5;
-    private static final int TAB_IDLE = 0xFF9E9E9E;
 
     private SharedPreferences sp;
     private float density;
@@ -52,6 +52,10 @@ public class MainActivity extends Activity {
     private FrameLayout content;
     private LinearLayout[] tabViews;
 
+    // Theme palette (filled by computePalette()).
+    private boolean dark;
+    private int colDim, colTag, colOverlay, colBar, colAccent, colIdle, colGen, colCtrl;
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(OrganClockWidget.localized(base));
@@ -59,8 +63,10 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle state) {
-        super.onCreate(state);
         sp = OrganClockWidget.prefs(this);
+        applyTheme(); // sets window theme + palette before inflating anything
+        super.onCreate(state);
+
         density = getResources().getDisplayMetrics().density;
         builtLang = sp.getString(OrganClockWidget.KEY_LANG, "");
         setTitle(getString(R.string.app_name));
@@ -89,23 +95,64 @@ public class MainActivity extends Activity {
         }
     }
 
+    // ---- Theme -------------------------------------------------------------
+
+    private void applyTheme() {
+        String t = sp.getString(OrganClockWidget.KEY_THEME, "system");
+        if ("dark".equals(t)) {
+            dark = true;
+        } else if ("light".equals(t)) {
+            dark = false;
+        } else {
+            int mode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+            dark = mode == Configuration.UI_MODE_NIGHT_YES;
+        }
+        setTheme(dark ? android.R.style.Theme_DeviceDefault
+                : android.R.style.Theme_DeviceDefault_Light);
+        computePalette();
+    }
+
+    private void computePalette() {
+        if (dark) {
+            colDim = 0xFFB0B0B0;
+            colTag = 0xCCFFFFFF;
+            colOverlay = 0x22FFFFFF;
+            colBar = 0xFF1E1E1E;
+            colAccent = 0xFF9FA8DA;
+            colIdle = 0xFF8A8A8A;
+            colGen = 0xFFB0BEC5;
+            colCtrl = 0xFFEF5350;
+        } else {
+            colDim = 0xFF666666;
+            colTag = 0xB4000000;
+            colOverlay = 0x1C000000;
+            colBar = 0xFFF5F5F5;
+            colAccent = 0xFF3F51B5;
+            colIdle = 0xFF9E9E9E;
+            colGen = 0xFF455A64;
+            colCtrl = 0xFFC62828;
+        }
+    }
+
     // ---- Bottom navigation -------------------------------------------------
 
     private LinearLayout buildBottomBar() {
         LinearLayout bar = new LinearLayout(this);
         bar.setOrientation(LinearLayout.HORIZONTAL);
-        bar.setBackgroundColor(0xFFF5F5F5);
+        bar.setBackgroundColor(colBar);
         int v = dp(6);
         bar.setPadding(0, v, 0, v);
 
-        int[] icons = {R.drawable.ic_now, R.drawable.ic_elements, R.drawable.ic_settings};
+        int[] icons = {R.drawable.ic_now, R.drawable.ic_elements,
+                R.drawable.ic_alerts, R.drawable.ic_settings};
         String[] labels = {
                 getString(R.string.now),
                 getString(R.string.screen_elements),
+                getString(R.string.screen_alerts),
                 getString(R.string.menu_settings),
         };
-        tabViews = new LinearLayout[3];
-        for (int i = 0; i < 3; i++) {
+        tabViews = new LinearLayout[icons.length];
+        for (int i = 0; i < icons.length; i++) {
             final int idx = i;
             LinearLayout tab = new LinearLayout(this);
             tab.setOrientation(LinearLayout.VERTICAL);
@@ -135,12 +182,21 @@ public class MainActivity extends Activity {
     private void showPage(int p) {
         page = p;
         for (int i = 0; i < tabViews.length; i++) {
-            int tint = (i == p) ? ACCENT : TAB_IDLE;
+            int tint = (i == p) ? colAccent : colIdle;
             ((ImageView) tabViews[i].getChildAt(0)).setColorFilter(tint);
             ((TextView) tabViews[i].getChildAt(1)).setTextColor(tint);
         }
         content.removeAllViews();
-        View view = (p == 0) ? buildNowPage() : (p == 1) ? buildElementsPage() : buildSettingsPage();
+        View view;
+        if (p == 0) {
+            view = buildNowPage();
+        } else if (p == 1) {
+            view = buildElementsPage();
+        } else if (p == 2) {
+            view = buildAlertsPage();
+        } else {
+            view = buildSettingsPage();
+        }
         content.addView(view);
     }
 
@@ -197,12 +253,12 @@ public class MainActivity extends Activity {
         block.setLayoutParams(lp);
 
         if (nowTag != null) {
-            block.setBackgroundColor(Color.argb(28, 0, 0, 0));
+            block.setBackgroundColor(colOverlay);
             TextView tag = new TextView(this);
             tag.setText(nowTag.toUpperCase());
             tag.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
             tag.setLetterSpacing(0.15f);
-            tag.setTextColor(Color.argb(180, 0, 0, 0));
+            tag.setTextColor(colTag);
             block.addView(tag);
         }
 
@@ -217,7 +273,7 @@ public class MainActivity extends Activity {
         TextView metaView = new TextView(this);
         metaView.setText(meta);
         metaView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
-        metaView.setTextColor(Color.argb(150, 0, 0, 0));
+        metaView.setTextColor(colDim);
         metaView.setPadding(0, dp(2), 0, dp(4));
         block.addView(metaView);
 
@@ -245,20 +301,18 @@ public class MainActivity extends Activity {
         intro.setPadding(0, 0, 0, dp(8));
         col.addView(intro);
 
-        FiveElementView diagram = new FiveElementView(this, names, ELEMENT5);
+        FiveElementView diagram = new FiveElementView(this, names, ELEMENT5, colGen, colCtrl);
         diagram.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         col.addView(diagram);
 
-        // Legend
-        col.addView(legendRow(0xFF455A64, res.getString(R.string.cycle_generating)));
-        col.addView(legendRow(0xFFC62828, res.getString(R.string.cycle_controlling)));
+        col.addView(legendRow(colGen, res.getString(R.string.cycle_generating)));
+        col.addView(legendRow(colCtrl, res.getString(R.string.cycle_controlling)));
 
-        // Cycles written out, language-aware.
         col.addView(cycleLine(names[0] + " → " + names[1] + " → " + names[2] + " → "
-                + names[3] + " → " + names[4] + " → " + names[0], 0xFF455A64));
+                + names[3] + " → " + names[4] + " → " + names[0], colGen));
         col.addView(cycleLine(names[0] + " → " + names[2] + " → " + names[4] + " → "
-                + names[1] + " → " + names[3] + " → " + names[0], 0xFFC62828));
+                + names[1] + " → " + names[3] + " → " + names[0], colCtrl));
 
         ScrollView scroll = new ScrollView(this);
         scroll.addView(col, new ViewGroup.LayoutParams(
@@ -291,45 +345,14 @@ public class MainActivity extends Activity {
         return t;
     }
 
-    // ---- Page: Settings ----------------------------------------------------
+    // ---- Page: Alerts ------------------------------------------------------
 
-    private View buildSettingsPage() {
+    private View buildAlertsPage() {
         Resources res = getResources();
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         int pad = dp(16);
         root.setPadding(pad, pad, pad, pad);
-
-        root.addView(header(res.getString(R.string.settings_language)));
-        final String[] codes = {"", "en", "cs"};
-        String[] langLabels = {
-                res.getString(R.string.lang_system),
-                res.getString(R.string.lang_en),
-                res.getString(R.string.lang_cs),
-        };
-        String current = sp.getString(OrganClockWidget.KEY_LANG, "");
-        final RadioGroup group = new RadioGroup(this);
-        for (int i = 0; i < codes.length; i++) {
-            RadioButton rb = new RadioButton(this);
-            rb.setText(langLabels[i]);
-            rb.setId(View.generateViewId());
-            rb.setTag(codes[i]);
-            group.addView(rb);
-            if (codes[i].equals(current)) {
-                group.check(rb.getId());
-            }
-        }
-        group.setOnCheckedChangeListener((g, checkedId) -> {
-            RadioButton rb = g.findViewById(checkedId);
-            if (rb == null) {
-                return;
-            }
-            sp.edit().putString(OrganClockWidget.KEY_LANG, (String) rb.getTag()).apply();
-            applyChanges();
-            getIntent().putExtra(EXTRA_PAGE, page);
-            recreate();
-        });
-        root.addView(group);
 
         root.addView(header(res.getString(R.string.settings_notify)));
         String[] organs = res.getStringArray(R.array.organs);
@@ -354,6 +377,70 @@ public class MainActivity extends Activity {
         scroll.addView(root, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         return scroll;
+    }
+
+    // ---- Page: Settings ----------------------------------------------------
+
+    private View buildSettingsPage() {
+        Resources res = getResources();
+        LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        int pad = dp(16);
+        root.setPadding(pad, pad, pad, pad);
+
+        addRadioSection(root,
+                res.getString(R.string.settings_theme),
+                new String[]{"system", "light", "dark"},
+                new String[]{
+                        res.getString(R.string.theme_system),
+                        res.getString(R.string.theme_light),
+                        res.getString(R.string.theme_dark)},
+                OrganClockWidget.KEY_THEME, false);
+
+        addRadioSection(root,
+                res.getString(R.string.settings_language),
+                new String[]{"", "en", "cs"},
+                new String[]{
+                        res.getString(R.string.lang_system),
+                        res.getString(R.string.lang_en),
+                        res.getString(R.string.lang_cs)},
+                OrganClockWidget.KEY_LANG, true);
+
+        ScrollView scroll = new ScrollView(this);
+        scroll.addView(root, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        return scroll;
+    }
+
+    /** A header + radio group bound to a preference key; rebuilds on change. */
+    private void addRadioSection(LinearLayout root, String title, final String[] codes,
+                                 String[] labels, final String prefKey, final boolean refreshWidget) {
+        root.addView(header(title));
+        String current = sp.getString(prefKey, codes[0]);
+        RadioGroup group = new RadioGroup(this);
+        for (int i = 0; i < codes.length; i++) {
+            RadioButton rb = new RadioButton(this);
+            rb.setText(labels[i]);
+            rb.setId(View.generateViewId());
+            rb.setTag(codes[i]);
+            group.addView(rb);
+            if (codes[i].equals(current)) {
+                group.check(rb.getId());
+            }
+        }
+        group.setOnCheckedChangeListener((g, checkedId) -> {
+            RadioButton rb = g.findViewById(checkedId);
+            if (rb == null) {
+                return;
+            }
+            sp.edit().putString(prefKey, (String) rb.getTag()).apply();
+            if (refreshWidget) {
+                applyChanges();
+            }
+            getIntent().putExtra(EXTRA_PAGE, page);
+            recreate();
+        });
+        root.addView(group);
     }
 
     private void applyChanges() {
@@ -407,7 +494,7 @@ public class MainActivity extends Activity {
         private final Paint ctrl = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final Paint ctrlHead = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-        FiveElementView(Context c, String[] names, int[] colors) {
+        FiveElementView(Context c, String[] names, int[] colors, int genColor, int ctrlColor) {
             super(c);
             this.names = names;
             this.colors = colors;
@@ -415,12 +502,12 @@ public class MainActivity extends Activity {
             label.setColor(Color.WHITE);
             label.setTextAlign(Paint.Align.CENTER);
             label.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-            gen.setColor(0xFF455A64);
+            gen.setColor(genColor);
             gen.setStyle(Paint.Style.STROKE);
-            ctrl.setColor(0xFFC62828);
+            ctrl.setColor(ctrlColor);
             ctrl.setStyle(Paint.Style.STROKE);
             ctrl.setPathEffect(new DashPathEffect(new float[]{14, 10}, 0));
-            ctrlHead.setColor(0xFFC62828);
+            ctrlHead.setColor(ctrlColor);
             ctrlHead.setStyle(Paint.Style.STROKE);
         }
 

@@ -5,13 +5,13 @@ A minimal Android home-screen widget. It shows the organ that is most active
 text), with a few supporting herbs beneath (small text). The display flips
 automatically every 2 hours.
 
-There's a small settings screen to pick the display language and choose which
-organs should notify you when they become active.
+A small app (light or dark) lets you browse the organs and the five-element
+cycles, choose which organs notify you, and pick the language and theme.
 
 ## App
 
 **Tapping the widget** (or a notification) opens the app, which has a bottom
-navigation bar with three tabs:
+navigation bar with four tabs:
 
 - **Now** — all twelve organs listed (colored element dot, organ name,
   element · emotion · time window, herbs), scrolled to and highlighting the one
@@ -19,23 +19,25 @@ navigation bar with three tabs:
 - **Elements** — a five-element diagram (drawn in code, no image assets) showing
   the **generating (Sheng)** cycle around the pentagon and the **controlling
   (Ke)** cycle across the star, with a legend and both cycles written out.
+- **Alerts** — tick any organs you want a notification for. When a ticked organ
+  becomes active (on its 2-hour boundary), you get one notification (organ name
+  + herbs). The first time you enable one, Android asks for notification
+  permission — allow it, or notifications stay silent.
 - **Settings** — see below.
 
 The app also opens from the **Organ Clock** icon in the app drawer.
 
 ## Settings
 
-On the **Settings** tab, two sections:
+On the **Settings** tab:
 
+- **Theme** — *System default*, *Light*, or *Dark*. System default follows the
+  phone's day/night setting.
 - **Language** — *System default*, *English*, or *Čeština*. This overrides the
   phone language for this app only; the widget and notifications both follow it.
-- **Notify me when active** — tick any organs you want a notification for. When a
-  ticked organ becomes active (on its 2-hour boundary), you get one notification
-  (organ name + herbs). The first time you enable one, Android asks for
-  notification permission — allow it, or notifications stay silent.
 
 Notifications keep working even without the widget on screen (they survive
-reboots), as long as you've placed the widget or opened settings at least once.
+reboots), as long as you've placed the widget or opened the app at least once.
 
 ## The schedule
 

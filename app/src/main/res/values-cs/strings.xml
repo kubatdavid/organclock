@@ -5,6 +5,11 @@
     <string name="menu_settings">Nastavení</string>
     <string name="now">Nyní</string>
     <string name="screen_elements">Živly</string>
+    <string name="screen_alerts">Upozornění</string>
+    <string name="settings_theme">Vzhled</string>
+    <string name="theme_system">Podle systému</string>
+    <string name="theme_light">Světlý</string>
+    <string name="theme_dark">Tmavý</string>
     <string name="cycle_generating">Tvořivý (Šeng)</string>
     <string name="cycle_controlling">Ovládací (Kche)</string>
     <string name="elements_intro">Každý živel vyživuje další (tvořivý cyklus) a jiný krotí (ovládací cyklus).</string>
