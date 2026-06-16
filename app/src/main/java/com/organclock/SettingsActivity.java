@@ -27,13 +27,17 @@ public class SettingsActivity extends Activity {
     private float density;
 
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(OrganClockWidget.localized(base));
+    }
+
+    @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         sp = OrganClockWidget.prefs(this);
         density = getResources().getDisplayMetrics().density;
 
-        Context l = OrganClockWidget.localized(this);
-        Resources res = l.getResources();
+        Resources res = getResources();
         setTitle(res.getString(R.string.app_name));
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);

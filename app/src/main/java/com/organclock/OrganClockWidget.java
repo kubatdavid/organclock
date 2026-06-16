@@ -40,6 +40,22 @@ public class OrganClockWidget extends AppWidgetProvider {
     static final String CHANNEL_ID = "organ_active";
     static final int NOTIFICATION_ID = 1;
 
+    // Five-element accent color per slot (Wood/Fire/Earth/Metal/Water).
+    static final int[] ELEMENT_COLOR = {
+            0xFF4CAF50, // Gallbladder  – Wood
+            0xFF4CAF50, // Liver        – Wood
+            0xFF90A4AE, // Lung         – Metal
+            0xFF90A4AE, // Large Int.   – Metal
+            0xFFC8A24B, // Stomach      – Earth
+            0xFFC8A24B, // Spleen       – Earth
+            0xFFE53935, // Heart        – Fire
+            0xFFE53935, // Small Int.   – Fire
+            0xFF1E88E5, // Bladder      – Water
+            0xFF1E88E5, // Kidney       – Water
+            0xFFE53935, // Pericardium  – Fire
+            0xFFE53935, // Triple Burner– Fire
+    };
+
     // Organ/window/herb text lives in res/values*/strings.xml so it can be
     // localized (see values-cs/ for Czech). Slots are indexed 0..11 starting at
     // the 23:00 window (Gallbladder).
