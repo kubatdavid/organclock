@@ -27,6 +27,9 @@ public class MeridianView extends View {
     private static final float BODY_W = 165.17456f;
     private static final float BODY_H = 500.8457f;
 
+    // Temporary calibration grid: set false once routes are encoded.
+    private static final boolean DEBUG_GRID = true;
+
     private static Path sBody; // parsed once, reused
 
     private final float[] path;
@@ -95,6 +98,28 @@ public class MeridianView extends View {
         c.drawCircle(bodyLeft + path[0] * bodyW, path[1] * h, w * 0.015f, startDot);
         int n = path.length;
         c.drawCircle(bodyLeft + path[n - 2] * bodyW, path[n - 1] * h, w * 0.017f, endDot);
+
+        if (DEBUG_GRID) {
+            drawGrid(c, w, h, bodyLeft, bodyW);
+        }
+    }
+
+    private void drawGrid(Canvas c, float w, float h, float bodyLeft, float bodyW) {
+        Paint g = new Paint(Paint.ANTI_ALIAS_FLAG);
+        g.setColor(0x66FF5252);
+        g.setStrokeWidth(1f);
+        Paint t = new Paint(Paint.ANTI_ALIAS_FLAG);
+        t.setColor(0xCCFF5252);
+        t.setTextSize(w * 0.030f);
+        for (int i = 0; i <= 10; i++) {
+            float f = i / 10f;
+            float x = bodyLeft + f * bodyW;
+            c.drawLine(x, 0, x, h, g);
+            c.drawText(String.valueOf(f), x + 2, h * 0.03f, t);
+            float y = f * h;
+            c.drawLine(bodyLeft, y, bodyLeft + bodyW, y, g);
+            c.drawText(String.valueOf(f), bodyLeft + 2, y - 2, t);
+        }
     }
 
     /** Read assets/body_path.txt and parse its M/L/C/Z commands into a Path. */
