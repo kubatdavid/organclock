@@ -39,11 +39,17 @@ public class MeridianView extends View {
         this.dashed = dashed;
         this.limbColor = limbColor;
 
-        body = c.getDrawable(R.drawable.ic_body);
-        if (body != null) {
-            body.mutate();
-            body.setTint(limbColor);
+        Drawable b = null;
+        try {
+            b = c.getDrawable(R.drawable.ic_body);
+            if (b != null) {
+                b.mutate();
+                b.setTint(limbColor);
+            }
+        } catch (Exception e) {
+            b = null; // degrade gracefully: show the meridian without the figure
         }
+        body = b;
 
         mer.setStyle(Paint.Style.STROKE);
         mer.setStrokeCap(Paint.Cap.ROUND);
