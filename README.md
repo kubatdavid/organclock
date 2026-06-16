@@ -110,6 +110,12 @@ Easiest, no cable needed:
 This is a *debug-signed* APK, which is fine for personal use. Updates: bump
 `versionCode` in `app/build.gradle`, push, rebuild, and install over the top.
 
+## Credits
+
+- Body silhouette ([ic_body.xml](app/src/main/res/drawable/ic_body.xml)): public
+  domain (CC0), "pitr" via the Open Clip Art Library / Wikimedia Commons
+  (*Man standing silhouette.svg*). The meridian routes drawn on top are original.
+
 ## Notes
 
 - Minimum Android 8 (API 26). Targets the latest Android, works on Android 16.
