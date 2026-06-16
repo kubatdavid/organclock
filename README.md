@@ -112,8 +112,9 @@ This is a *debug-signed* APK, which is fine for personal use. Updates: bump
 
 ## Credits
 
-- Body silhouette ([ic_body.xml](app/src/main/res/drawable/ic_body.xml)): public
-  domain (CC0), "pitr" via the Open Clip Art Library / Wikimedia Commons
+- Body silhouette (`app/src/main/assets/body_path.txt`, drawn by
+  [MeridianView.java](app/src/main/java/com/organclock/MeridianView.java)):
+  public domain (CC0), "pitr" via the Open Clip Art Library / Wikimedia Commons
   (*Man standing silhouette.svg*). The meridian routes drawn on top are original.
 
 ## Notes

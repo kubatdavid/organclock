@@ -5,30 +5,34 @@ import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.drawable.Drawable;
 import android.view.View;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 /**
  * A body figure with one meridian traced on it.
  *
  * The figure is a public-domain (CC0) full-body silhouette (Open Clip Art,
- * "pitr", via Wikimedia Commons), shipped as the vector drawable ic_body. The
- * meridian routes are supplied as normalized (0..1) points and mapped onto the
- * centered figure; channels that run on the back are drawn dashed.
+ * "pitr", via Wikimedia Commons). Its outline path ships in assets/body_path.txt
+ * and is parsed into an android Path here (the platform vector loader can't
+ * handle a path this large). The meridian routes are supplied as normalized
+ * (0..1) points and mapped onto the centered figure; back channels are dashed.
  *
  * The pathways are approximate (schematic), not an acupoint atlas.
  */
 public class MeridianView extends View {
 
-    // Native viewport of ic_body.xml (so the drawing keeps the body's aspect).
+    // Native viewport of the silhouette (keeps the body's aspect ratio).
     private static final float BODY_W = 165.17456f;
     private static final float BODY_H = 500.8457f;
 
+    private static Path sBody; // parsed once, reused
+
     private final float[] path;
     private final boolean dashed;
-    private final int limbColor;
-    private final Drawable body;
 
+    private final Paint bodyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint mer = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint startDot = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint endDot = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -37,19 +41,13 @@ public class MeridianView extends View {
         super(c);
         this.path = path;
         this.dashed = dashed;
-        this.limbColor = limbColor;
 
-        Drawable b = null;
-        try {
-            b = c.getDrawable(R.drawable.ic_body);
-            if (b != null) {
-                b.mutate();
-                b.setTint(limbColor);
-            }
-        } catch (Exception e) {
-            b = null; // degrade gracefully: show the meridian without the figure
+        if (sBody == null) {
+            sBody = parseBody(c);
         }
-        body = b;
+
+        bodyPaint.setStyle(Paint.Style.FILL);
+        bodyPaint.setColor(limbColor);
 
         mer.setStyle(Paint.Style.STROKE);
         mer.setStrokeCap(Paint.Cap.ROUND);
@@ -74,9 +72,12 @@ public class MeridianView extends View {
         float bodyW = h * (BODY_W / BODY_H);
         float bodyLeft = (w - bodyW) / 2f;
 
-        if (body != null) {
-            body.setBounds(Math.round(bodyLeft), 0, Math.round(bodyLeft + bodyW), Math.round(h));
-            body.draw(c);
+        if (sBody != null) {
+            c.save();
+            c.translate(bodyLeft, 0);
+            c.scale(bodyW / BODY_W, h / BODY_H);
+            c.drawPath(sBody, bodyPaint);
+            c.restore();
         }
 
         float stroke = w * 0.020f;
@@ -94,5 +95,109 @@ public class MeridianView extends View {
         c.drawCircle(bodyLeft + path[0] * bodyW, path[1] * h, w * 0.015f, startDot);
         int n = path.length;
         c.drawCircle(bodyLeft + path[n - 2] * bodyW, path[n - 1] * h, w * 0.017f, endDot);
+    }
+
+    /** Read assets/body_path.txt and parse its M/L/C/Z commands into a Path. */
+    private static Path parseBody(Context c) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            BufferedReader r = new BufferedReader(
+                    new InputStreamReader(c.getAssets().open("body_path.txt")));
+            String line;
+            while ((line = r.readLine()) != null) {
+                sb.append(line).append(' ');
+            }
+            r.close();
+            return parsePath(sb.toString());
+        } catch (Exception e) {
+            return null; // degrade gracefully: meridian without the figure
+        }
+    }
+
+    // Minimal SVG-path parser supporting M/m, L/l, C/c, Z/z (all this file uses).
+    private static Path parsePath(String d) {
+        Path p = new Path();
+        char[] s = d.toCharArray();
+        int len = s.length;
+        int[] idx = {0};
+        char cmd = 0;
+        float cx = 0, cy = 0, sx = 0, sy = 0;
+        try {
+            while (true) {
+                skipSep(s, idx, len);
+                if (idx[0] >= len) {
+                    break;
+                }
+                char ch = s[idx[0]];
+                if (isAlpha(ch)) {
+                    cmd = ch;
+                    idx[0]++;
+                    if (cmd == 'z' || cmd == 'Z') {
+                        p.close();
+                        cx = sx;
+                        cy = sy;
+                        continue;
+                    }
+                }
+                boolean rel = Character.isLowerCase(cmd);
+                char C = Character.toUpperCase(cmd);
+                if (C == 'M') {
+                    float x = num(s, idx, len), y = num(s, idx, len);
+                    if (rel) { x += cx; y += cy; }
+                    p.moveTo(x, y);
+                    cx = x; cy = y; sx = x; sy = y;
+                    cmd = rel ? 'l' : 'L';
+                } else if (C == 'L') {
+                    float x = num(s, idx, len), y = num(s, idx, len);
+                    if (rel) { x += cx; y += cy; }
+                    p.lineTo(x, y);
+                    cx = x; cy = y;
+                } else if (C == 'C') {
+                    float x1 = num(s, idx, len), y1 = num(s, idx, len);
+                    float x2 = num(s, idx, len), y2 = num(s, idx, len);
+                    float x = num(s, idx, len), y = num(s, idx, len);
+                    if (rel) { x1 += cx; y1 += cy; x2 += cx; y2 += cy; x += cx; y += cy; }
+                    p.cubicTo(x1, y1, x2, y2, x, y);
+                    cx = x; cy = y;
+                } else {
+                    idx[0]++; // skip anything unexpected
+                }
+            }
+        } catch (Exception e) {
+            // return whatever parsed so far
+        }
+        return p;
+    }
+
+    private static void skipSep(char[] s, int[] idx, int len) {
+        while (idx[0] < len) {
+            char ch = s[idx[0]];
+            if (ch == ' ' || ch == ',' || ch == '\t' || ch == '\n' || ch == '\r') {
+                idx[0]++;
+            } else {
+                break;
+            }
+        }
+    }
+
+    private static float num(char[] s, int[] idx, int len) {
+        skipSep(s, idx, len);
+        int start = idx[0];
+        if (idx[0] < len && (s[idx[0]] == '-' || s[idx[0]] == '+')) {
+            idx[0]++;
+        }
+        while (idx[0] < len) {
+            char ch = s[idx[0]];
+            if ((ch >= '0' && ch <= '9') || ch == '.') {
+                idx[0]++;
+            } else {
+                break;
+            }
+        }
+        return Float.parseFloat(new String(s, start, idx[0] - start));
+    }
+
+    private static boolean isAlpha(char ch) {
+        return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
     }
 }
