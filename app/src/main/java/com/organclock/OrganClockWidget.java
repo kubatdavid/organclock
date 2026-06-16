@@ -102,9 +102,10 @@ public class OrganClockWidget extends AppWidgetProvider {
         String[] organs = res.getStringArray(R.array.organs);
         String[] herbs = res.getStringArray(R.array.herbs);
         String[] emotions = res.getStringArray(R.array.emotions);
+        String[] elements = res.getStringArray(R.array.elements);
 
         int slot = currentSlot();
-        String subtitle = windows[slot] + "  ·  " + emotions[slot];
+        String subtitle = windows[slot] + "  ·  " + elements[slot] + "  ·  " + emotions[slot];
 
         AppWidgetManager mgr = AppWidgetManager.getInstance(ctx);
         int[] ids = mgr.getAppWidgetIds(new ComponentName(ctx, OrganClockWidget.class));

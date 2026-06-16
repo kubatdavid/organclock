@@ -25,6 +25,21 @@
         <item>Trojitý ohřívač</item>
     </string-array>
 
+    <string-array name="elements">
+        <item>Dřevo</item>
+        <item>Dřevo</item>
+        <item>Kov</item>
+        <item>Kov</item>
+        <item>Země</item>
+        <item>Země</item>
+        <item>Oheň</item>
+        <item>Oheň</item>
+        <item>Voda</item>
+        <item>Voda</item>
+        <item>Oheň</item>
+        <item>Oheň</item>
+    </string-array>
+
     <string-array name="emotions">
         <item>Hněv</item>
         <item>Hněv</item>

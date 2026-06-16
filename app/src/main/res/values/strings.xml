@@ -38,6 +38,21 @@
         <item>Triple Burner</item>
     </string-array>
 
+    <string-array name="elements">
+        <item>Wood</item>
+        <item>Wood</item>
+        <item>Metal</item>
+        <item>Metal</item>
+        <item>Earth</item>
+        <item>Earth</item>
+        <item>Fire</item>
+        <item>Fire</item>
+        <item>Water</item>
+        <item>Water</item>
+        <item>Fire</item>
+        <item>Fire</item>
+    </string-array>
+
     <string-array name="emotions">
         <item>Anger</item>
         <item>Anger</item>
